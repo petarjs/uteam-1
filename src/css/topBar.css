@@ -1,0 +1,37 @@
+.top-bar-container {
+  background-color: #707070;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: fixed;
+  top: 0px;
+  width: 100%;
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
+
+.login-register-container,
+.logout-my-profile-container {
+  display: flex;
+}
+
+.fa-star {
+  color: white;
+  margin-left: 30px;
+}
+
+.login-title,
+.logout-title {
+  color: white;
+  margin-right: 20px;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.register-title,
+.my-profile-title {
+  color: white;
+  margin-right: 20px;
+  font-size: 15px;
+  cursor: pointer;
+}

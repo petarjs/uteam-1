@@ -1,0 +1,88 @@
+.register-container {
+  width: 300px;
+  margin: auto;
+  margin-top: 150px;
+  background-color: #fefefe;
+  border-radius: 10px;
+  padding: 30px;
+}
+
+.uTeam-register-title {
+  color: #707070;
+  font-size: 22px;
+  margin-bottom: 20px;
+}
+
+.name-input-title-container,
+.profile-photo-input-title-container {
+  text-align: left;
+  color: #707070;
+  width: 60%;
+  margin: auto;
+  margin-bottom: 10px;
+}
+
+.name-input-title {
+  font-size: 10px;
+  margin-bottom: -5px;
+  color: #707070;
+  text-align: left;
+}
+
+.profile-photo-input-title {
+  font-size: 10px;
+  color: #707070;
+  text-align: left;
+}
+
+.register-button {
+  color: white;
+  border: none;
+  border-radius: 13px;
+  font-weight: 600;
+  font-size: 10px;
+  letter-spacing: 0.5px;
+  background-color: #707070;
+  padding: 8px 10px;
+  cursor: pointer;
+}
+
+input[type='file'] {
+  display: none;
+}
+
+.custom-file-upload {
+  width: 102%;
+  border: 1px solid #707070;
+  border-radius: 5px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  cursor: pointer;
+  text-align: right;
+  padding-left: 5px;
+}
+
+.upload-file-placeholder {
+  color: lightgrey;
+  font-size: 11px;
+}
+
+.choose-file-button {
+  border: none;
+  font-size: 12px;
+  text-align: center;
+  background-color: #707070;
+  color: white;
+  width: 40%;
+  border-radius: 5px;
+  padding: 0px 5px;
+  margin-right: -2px;
+}
+
+@media only screen and (max-width: 500px) {
+  .register-container {
+    width: 90%;
+    padding: 2%;
+  }
+}
