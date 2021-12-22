@@ -1,38 +1,32 @@
 import './App.css';
+import { useState } from 'react';
 import TopBar from './components/TopBar';
 import SideBar from './components/SideBar';
-import Login from './components/login';
-import Register from './components/Register';
-import { useState } from 'react';
+import LoginRegister from './components/LoginRegister';
+import { HStack, Heading } from '@chakra-ui/layout';
 
 const App = () => {
-  const [showSideBar, setShowSideBar] = useState(false);
-  const [visibleLogin, setVisibilityLogin] = useState(true);
-  const [visibleRegister, setVisibilityRegister] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [activeOption, setActiveOption] = useState('login');
   return (
     <div className="App">
       <TopBar
-        setShowSideBar={setShowSideBar}
-        visibleLogin={visibleLogin}
-        setVisibilityLogin={setVisibilityLogin}
-        visibleRegister={visibleRegister}
-        setVisibilityRegister={setVisibilityRegister}
+        isLoggedIn={isLoggedIn}
+        setIsLoggedIn={setIsLoggedIn}
+        setActiveOption={setActiveOption}
       />
-      {showSideBar ? <SideBar /> : null}
-      {visibleLogin ? (
-        <Login
-          setVisibilityLogin={setVisibilityLogin}
-          setShowSideBar={setShowSideBar}
-          setVisibilityRegister={setVisibilityRegister}
+      {isLoggedIn ? (
+        <HStack>
+          <SideBar w="10vw" isLoggedIn={isLoggedIn} />
+          <Heading w="80vw">Main content</Heading>
+        </HStack>
+      ) : (
+        <LoginRegister
+          setIsLoggedIn={setIsLoggedIn}
+          activeOption={activeOption}
+          setActiveOption={setActiveOption}
         />
-      ) : null}
-      {visibleRegister ? (
-        <Register
-          setShowSideBar={setShowSideBar}
-          setVisibilityLogin={setVisibilityLogin}
-          setVisibilityRegister={setVisibilityRegister}
-        />
-      ) : null}
+      )}
     </div>
   );
 };

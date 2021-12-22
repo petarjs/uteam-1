@@ -1,40 +1,57 @@
-import '../css/topBar.css';
+import { HStack, Text, Button, Spacer, Box } from '@chakra-ui/react';
 
 const TopBar = (props) => {
-  const logout = () => {
-    props.setVisibilityLogin(true);
-    props.setShowSideBar(false);
-  };
-  const openLogin = () => {
-    props.setVisibilityLogin(true);
-    props.setVisibilityRegister(false);
-  };
-  const openRegister = () => {
-    props.setVisibilityLogin(false);
-    props.setVisibilityRegister(true);
-  };
   return (
-    <section className="top-bar-container">
-      <i className="fas fa-star"></i>
-
-      {props.visibleLogin || props.visibleRegister ? (
-        <section className="login-register-container">
-          <p className="login-title" onClick={openLogin}>
-            Login
-          </p>
-          <p className="register-title" onClick={openRegister}>
-            Register
-          </p>
-        </section>
-      ) : (
-        <section className="logout-my-profile-container">
-          <p className="logout-title" onClick={logout}>
+    <HStack
+      alignItems="stretch"
+      bgGradient="linear(to-r, prettyPink, prettyPink, prettyOrange)"
+      h="10vh"
+      borderBottom="3px solid"
+      borderColor="white"
+    >
+      <HStack color="White" fontWeight={'extrabold'} pl={10}>
+        <i className="far fa-building"></i>
+        <Text pl={1}>uTeam</Text>
+      </HStack>
+      <Spacer />
+      {props.isLoggedIn ? (
+        <HStack pr={10}>
+          <Button
+            bg="white"
+            color="prettyPink"
+            variant="solid"
+            onClick={() => {
+              props.setIsLoggedIn(false);
+              props.setActiveOption('login');
+            }}
+          >
             Logout
-          </p>
-          <p className="my-profile-title">My profile</p>
-        </section>
+          </Button>
+          <Button bg="white" color="prettyPink" variant="solid">
+            My Profile
+          </Button>
+        </HStack>
+      ) : (
+        <HStack pr={10}>
+          <Button
+            bg="white"
+            color="prettyPink"
+            variant="solid"
+            onClick={() => props.setActiveOption('login')}
+          >
+            Login
+          </Button>
+          <Button
+            bg="white"
+            color="prettyPink"
+            variant="solid"
+            onClick={() => props.setActiveOption('register')}
+          >
+            Register
+          </Button>
+        </HStack>
       )}
-    </section>
+    </HStack>
   );
 };
 

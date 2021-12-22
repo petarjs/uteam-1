@@ -1,34 +1,40 @@
-import '../css/sideBar.css';
+import { VStack, HStack, Heading, Text, Button, Spacer, Box } from '@chakra-ui/react';
 
-const SideBar = () => {
+const SideBar = (props) => {
   return (
-    <section className="side-bar-container">
-      <section className="side-bar-content">
-        <section className="menu-title">Menu</section>
-        <section className="side-bar-items">
-          <section className="arrow-and-title-container">
-            <i className="fas fa-chevron-right"></i>
-            <p className="pending-for-approval-title title">Pending for approval</p>
-          </section>
-          <section className="arrow-and-title-container">
-            <i className="fas fa-chevron-right"></i>
-            <p className="team-title title">Team</p>
-          </section>
-          <section className="arrow-and-title-container">
-            <i className="fas fa-chevron-right"></i>
-            <p className="questions-title title">Questions</p>
-          </section>
-          <section className="arrow-and-title-container">
-            <i className="fas fa-chevron-right"></i>
-            <p className="company-info-title title">Company Info </p>
-          </section>
-          <section className="arrow-and-title-container">
-            <i className="fas fa-chevron-right"></i>
-            <p className="my-profile-title title">My profile</p>
-          </section>
-        </section>
-      </section>
-    </section>
+    <Box mx="left">
+      {props.isLoggedIn ? (
+        <VStack
+          alignItems={'flex-start'}
+          p={10}
+          h="90vh"
+          color="white"
+          bgGradient="linear(to-t, prettyOrange, prettyPink)"
+        >
+          <Heading mt="20vh">Menu</Heading>
+          <HStack>
+            <i className="far fa-star"></i>
+            <Text pl={1}>Pending for Approval</Text>
+          </HStack>
+          <HStack>
+            <i className="far fa-star"></i>
+            <Text pl={1}>Team</Text>
+          </HStack>
+          <HStack>
+            <i className="far fa-star"></i>
+            <Text pl={1}>Questions</Text>
+          </HStack>
+          <HStack>
+            <i className="far fa-star"></i>
+            <Text pl={1}>Company Info</Text>
+          </HStack>
+          <HStack>
+            <i className="far fa-star"></i>
+            <Text pl={1}>My Profile</Text>
+          </HStack>
+        </VStack>
+      ) : null}
+    </Box>
   );
 };
 
