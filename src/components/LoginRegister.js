@@ -1,14 +1,10 @@
 import {
   VStack,
-  HStack,
   Heading,
-  Text,
   Button,
-  Spacer,
   Box,
   FormControl,
   InputGroup,
-  InputElement,
   InputLeftElement,
   InputRightElement,
   Input,
@@ -24,11 +20,10 @@ const LoginRegister = (props) => {
     setShowPassword(!showPassword);
   };
   return (
-    <VStack w="100%" mx="left">
+    <VStack w="100%" h="100vh" mx="left" bgGradient="linear(to-r, #E8F6EF, #E8F6EF)">
       {props.activeOption === 'login' ? (
-        //   Login
-        <Box mt="10%" textAlign="center">
-          <Heading color="#FFE300" mb="8">
+        <Box bg="white" mt="10%" textAlign="center" boxShadow="md" p={6} rounded="md">
+          <Heading color="#2FE1D6" mb="8" textShadow="1px 1px #e0e0e0">
             Welcome
           </Heading>
           <form
@@ -41,10 +36,11 @@ const LoginRegister = (props) => {
               <FormControl>
                 <InputGroup>
                   <InputLeftElement
+                    color="gray.300"
                     pointerEvents="none"
                     children={<i className="fas fa-user-alt"></i>}
                   />
-                  <Input type="email" placeholder="Email address" />
+                  <Input borderColor="#2FE1D6" type="email" placeholder="Email address" />
                 </InputGroup>
               </FormControl>
               <FormControl>
@@ -54,14 +50,30 @@ const LoginRegister = (props) => {
                     color="gray.300"
                     children={<i className="fas fa-lock"></i>}
                   />
-                  <Input type={showPassword ? 'text' : 'password'} placeholder="Password" />
+                  <Input
+                    borderColor="#2FE1D6"
+                    type={showPassword ? 'text' : 'password'}
+                    placeholder="Password"
+                  />
                   <InputRightElement width="4.5rem">
-                    <Button h="1.75rem" size="sm" onClick={handleShowPasswordChange}>
+                    <Button
+                      _focus="outline-none"
+                      _hover={{
+                        background: '#2FE1D6',
+                      }}
+                      color="white"
+                      textShadow="1px 1px #e0e0e0"
+                      bg="#2FE1D6"
+                      h="1.75rem"
+                      size="sm"
+                      onClick={handleShowPasswordChange}
+                    >
                       {showPassword ? 'Hide' : 'Show'}
                     </Button>
                   </InputRightElement>
                 </InputGroup>
                 <FormHelperText
+                  color="gray.300"
                   textAlign="left"
                   mt="3"
                   mb="3"
@@ -70,7 +82,18 @@ const LoginRegister = (props) => {
                   Don't have an account?
                 </FormHelperText>
               </FormControl>
-              <Button borderRadius={0} type="submit" variant="solid" bg="#FFEF78" width="full">
+              <Button
+                _hover={{
+                  background: '#2FE1D6',
+                }}
+                color="white"
+                textShadow="1px 1px #e0e0e0"
+                borderRadius={0}
+                type="submit"
+                variant="solid"
+                bg="#2FE1D6"
+                width="full"
+              >
                 Login
               </Button>
             </VStack>
@@ -78,8 +101,8 @@ const LoginRegister = (props) => {
         </Box>
       ) : (
         //   Register
-        <Box mt="10%" textAlign="center">
-          <Heading color="#FFE300" mb="8">
+        <Box bg="white" p={6} mt="8%" textAlign="center" boxShadow="md" p={6} rounded="md">
+          <Heading color="#2FE1D6" mb="8" textShadow="1px 1px #e0e0e0">
             Register
           </Heading>
           <form
@@ -92,19 +115,21 @@ const LoginRegister = (props) => {
               {/* Name */}
               <InputGroup>
                 <InputLeftElement
+                  color="gray.300"
                   pointerEvents="none"
                   children={<i className="fas fa-signature"></i>}
                 />
-                <Input type="text" placeholder="Name" />
+                <Input borderColor="#2FE1D6" type="text" placeholder="Name" />
               </InputGroup>
               {/* Email */}
               <FormControl>
                 <InputGroup>
                   <InputLeftElement
+                    color="gray.300"
                     pointerEvents="none"
                     children={<i className="fas fa-user-alt"></i>}
                   />
-                  <Input type="email" placeholder="Email address" />
+                  <Input borderColor="#2FE1D6" type="email" placeholder="Email address" />
                 </InputGroup>
               </FormControl>
               {/* Password */}
@@ -115,9 +140,24 @@ const LoginRegister = (props) => {
                     color="gray.300"
                     children={<i className="fas fa-lock"></i>}
                   />
-                  <Input type={showPassword ? 'text' : 'password'} placeholder="Password" />
+                  <Input
+                    borderColor="#2FE1D6"
+                    type={showPassword ? 'text' : 'password'}
+                    placeholder="Password"
+                  />
                   <InputRightElement width="4.5rem">
-                    <Button h="1.75rem" size="sm" onClick={handleShowPasswordChange}>
+                    <Button
+                      _focus="outline-none"
+                      _hover={{
+                        background: '#2FE1D6',
+                      }}
+                      color="white"
+                      textShadow="1px 1px #e0e0e0"
+                      bg="#2FE1D6"
+                      h="1.75rem"
+                      size="sm"
+                      onClick={handleShowPasswordChange}
+                    >
                       {showPassword ? 'Hide' : 'Show'}
                     </Button>
                   </InputRightElement>
@@ -128,7 +168,7 @@ const LoginRegister = (props) => {
                   alignItems="center"
                   mt="2"
                   border="1px solid"
-                  borderColor="#E2E8F0"
+                  borderColor="#2FE1D6"
                   borderRadius="5"
                   p={1.5}
                 >
@@ -141,6 +181,13 @@ const LoginRegister = (props) => {
                     Upload File
                   </FormLabel>
                   <Button
+                    _focus="outline-none"
+                    _hover={{
+                      background: '#2FE1D6',
+                    }}
+                    color="white"
+                    textShadow="1px 1px #e0e0e0"
+                    bg="#2FE1D6"
                     h="1.75rem"
                     size="sm"
                     onClick={() => {
@@ -160,7 +207,20 @@ const LoginRegister = (props) => {
                   Already have an account?
                 </FormHelperText>
               </FormControl>
-              <Button borderRadius={0} type="submit" variant="solid" bg="#FFEF78" width="full">
+              <Button
+                _focus="outline-none"
+                _hover={{
+                  background: '#2FE1D6',
+                }}
+                color="white"
+                textShadow="1px 1px #e0e0e0"
+                bg="#2FE1D6"
+                borderRadius={0}
+                type="submit"
+                variant="solid"
+                bg="#2FE1D6"
+                width="full"
+              >
                 Register
               </Button>
             </VStack>

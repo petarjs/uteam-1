@@ -6,6 +6,9 @@ const theme = extendTheme({
     prettyOrange: '#FFEF78',
     prettyPink: '#FF95C5',
   },
+  fonts: {
+    body: 'Poppins',
+  },
 });
 
 export default theme;
