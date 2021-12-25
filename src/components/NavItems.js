@@ -1,5 +1,6 @@
 import { Flex, Text, Icon, Link, Menu, MenuButton, MenuList } from '@chakra-ui/react';
 import NavHoverBox from '../components/NavHoverBox';
+import { NAV_SIZE } from '../constants/index';
 import { useState } from 'react';
 
 const NavItem = ({ navSize, title, icon, description }) => {
@@ -10,11 +11,11 @@ const NavItem = ({ navSize, title, icon, description }) => {
       mt={30}
       flexDir="column"
       w="100%"
-      alignItems={navSize == 'small' ? 'center' : 'flex-start'}
+      alignItems={navSize == NAV_SIZE.SMALL ? 'center' : 'flex-start'}
     >
       <Menu placement="right">
         <Link
-          onClick={handleSetActiveChange}
+          onClick={(e) => handleSetActiveChange(e)}
           p={3}
           borderRadius={8}
           color="black"
@@ -26,12 +27,12 @@ const NavItem = ({ navSize, title, icon, description }) => {
           _focus={{
             bg: '#97FFCF',
           }}
-          w={navSize == 'large' && '100%'}
+          w={navSize == NAV_SIZE.LARGE && '100%'}
         >
           <MenuButton w="100%">
             <Flex>
               <Icon color="white" as={icon} fontSize="xl" />
-              <Text ml={5} display={navSize == 'small' ? 'none' : 'flex'} color="white">
+              <Text ml={5} display={navSize == NAV_SIZE.SMALL ? 'none' : 'flex'} color="white">
                 {title}
               </Text>
             </Flex>

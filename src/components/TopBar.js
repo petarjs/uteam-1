@@ -1,7 +1,11 @@
 import { HStack, Text, Button, Spacer, Icon } from '@chakra-ui/react';
 import { WiStars } from 'react-icons/wi';
 
-const TopBar = (props) => {
+const TopBar = ({ isLoggedIn, setIsLoggedIn, setActiveOption }) => {
+  const handleLogout = () => {
+    setIsLoggedIn(false);
+    setActiveOption('login');
+  };
   return (
     <HStack
       alignItems="stretch"
@@ -17,17 +21,14 @@ const TopBar = (props) => {
         </Text>
       </HStack>
       <Spacer />
-      {props.isLoggedIn ? (
+      {isLoggedIn ? (
         <HStack pr={10}>
           <Button
             _focus="outline-none"
             bg="white"
             color="#38C6BD"
             variant="solid"
-            onClick={() => {
-              props.setIsLoggedIn(false);
-              props.setActiveOption('login');
-            }}
+            onClick={(e) => handleLogout(e)}
           >
             Logout
           </Button>
@@ -42,7 +43,7 @@ const TopBar = (props) => {
             bg="white"
             color="#38C6BD"
             variant="solid"
-            onClick={() => props.setActiveOption('login')}
+            onClick={() => setActiveOption('login')}
           >
             Login
           </Button>
@@ -51,7 +52,7 @@ const TopBar = (props) => {
             bg="white"
             color="#38C6BD"
             variant="solid"
-            onClick={() => props.setActiveOption('register')}
+            onClick={() => setActiveOption('register')}
           >
             Register
           </Button>

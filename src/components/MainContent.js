@@ -1,9 +1,9 @@
 import { Heading } from "@chakra-ui/layout";
 
-const MainContent = (props) => {
+const MainContent = ({setActiveOption}) => {
   return (
     {
-        !props.isLoggedIn ?
+        !isLoggedIn ?
         <Heading>User is logged in</Heading> 
         :
         <Heading>Choose item in menu</Heading> 

@@ -2,7 +2,6 @@ import { Flex, Heading, Text, Icon } from '@chakra-ui/react';
 const NavHoverBox = ({ icon, title, description }) => {
   return (
     <>
-      <Flex />
       <Flex
         h={200}
         w={200}

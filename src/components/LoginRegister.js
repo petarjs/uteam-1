@@ -13,25 +13,25 @@ import {
 } from '@chakra-ui/react';
 import { useState, useRef } from 'react';
 
-const LoginRegister = (props) => {
+const LoginRegister = ({ setIsLoggedIn, activeOption, setActiveOption }) => {
   const [showPassword, setShowPassword] = useState(false);
   const filePicker = useRef(null);
   const handleShowPasswordChange = () => {
     setShowPassword(!showPassword);
   };
+
+  const handleLogin = (e) => {
+    e.preventDefault();
+    setIsLoggedIn(true);
+  };
   return (
     <VStack w="100%" h="100vh" mx="left" bgGradient="linear(to-r, #E8F6EF, #E8F6EF)">
-      {props.activeOption === 'login' ? (
+      {activeOption === 'login' ? (
         <Box bg="white" mt="10%" textAlign="center" boxShadow="md" p={6} rounded="md">
           <Heading color="#2FE1D6" mb="8" textShadow="1px 1px #e0e0e0">
             Welcome
           </Heading>
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              props.setIsLoggedIn(true);
-            }}
-          >
+          <form onSubmit={(e) => handleLogin(e)}>
             <VStack>
               <FormControl>
                 <InputGroup>
@@ -66,7 +66,7 @@ const LoginRegister = (props) => {
                       bg="#2FE1D6"
                       h="1.75rem"
                       size="sm"
-                      onClick={handleShowPasswordChange}
+                      onClick={(e) => handleShowPasswordChange(e)}
                     >
                       {showPassword ? 'Hide' : 'Show'}
                     </Button>
@@ -77,7 +77,7 @@ const LoginRegister = (props) => {
                   textAlign="left"
                   mt="3"
                   mb="3"
-                  onClick={() => props.setActiveOption('register')}
+                  onClick={() => setActiveOption('register')}
                 >
                   Don't have an account?
                 </FormHelperText>
@@ -105,12 +105,7 @@ const LoginRegister = (props) => {
           <Heading color="#2FE1D6" mb="8" textShadow="1px 1px #e0e0e0">
             Register
           </Heading>
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              props.setIsLoggedIn(true);
-            }}
-          >
+          <form onSubmit={(e) => handleLogin(e)}>
             <VStack>
               {/* Name */}
               <InputGroup>
@@ -156,7 +151,7 @@ const LoginRegister = (props) => {
                       bg="#2FE1D6"
                       h="1.75rem"
                       size="sm"
-                      onClick={handleShowPasswordChange}
+                      onClick={(e) => handleShowPasswordChange(e)}
                     >
                       {showPassword ? 'Hide' : 'Show'}
                     </Button>
@@ -202,7 +197,7 @@ const LoginRegister = (props) => {
                   textAlign="left"
                   mt="10"
                   mb="3"
-                  onClick={() => props.setActiveOption('login')}
+                  onClick={() => setActiveOption('login')}
                 >
                   Already have an account?
                 </FormHelperText>
