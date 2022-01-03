@@ -1,11 +1,11 @@
 import { HStack, Text, Button, Spacer, Icon } from '@chakra-ui/react';
 import { WiStars } from 'react-icons/wi';
+import { useAuthContext } from './AuthContextProvider';
+import { Link } from 'react-router-dom';
 
-const TopBar = ({ isLoggedIn, setIsLoggedIn, setActiveOption }) => {
-  const handleLogout = () => {
-    setIsLoggedIn(false);
-    setActiveOption('login');
-  };
+const TopBar = () => {
+  const { isLoggedIn, handleLogout } = useAuthContext();
+
   return (
     <HStack
       alignItems="stretch"
@@ -16,46 +16,43 @@ const TopBar = ({ isLoggedIn, setIsLoggedIn, setActiveOption }) => {
     >
       <HStack color="White" fontWeight={'extrabold'} pl={10}>
         <Icon color="white" as={WiStars} fontSize="xxx-large" />
-        <Text pl={1} _hover={{ cursor: 'pointer' }}>
-          uTeam
-        </Text>
+        <Link to="/">
+          <Text pl={1} _hover={{ cursor: 'pointer' }}>
+            uTeam
+          </Text>
+        </Link>
       </HStack>
       <Spacer />
       {isLoggedIn ? (
         <HStack pr={10}>
-          <Button
-            _focus="outline-none"
-            bg="white"
-            color="#38C6BD"
-            variant="solid"
-            onClick={(e) => handleLogout(e)}
-          >
-            Logout
-          </Button>
+          <Link to="/">
+            <Button
+              _focus="outline-none"
+              bg="white"
+              color="#38C6BD"
+              variant="solid"
+              onClick={(e) => handleLogout(e)}
+            >
+              Logout
+            </Button>
+          </Link>
+
           <Button _focus="outline-none" bg="white" color="#38C6BD" variant="solid">
             My Profile
           </Button>
         </HStack>
       ) : (
         <HStack pr={10}>
-          <Button
-            _focus="outline-none"
-            bg="white"
-            color="#38C6BD"
-            variant="solid"
-            onClick={() => setActiveOption('login')}
-          >
-            Login
-          </Button>
-          <Button
-            _focus="outline-none"
-            bg="white"
-            color="#38C6BD"
-            variant="solid"
-            onClick={() => setActiveOption('register')}
-          >
-            Register
-          </Button>
+          <Link to="/login">
+            <Button _focus="outline-none" bg="white" color="#38C6BD" variant="solid">
+              Login
+            </Button>
+          </Link>
+          <Link to="/register">
+            <Button _focus="outline-none" bg="white" color="#38C6BD" variant="solid">
+              Register
+            </Button>
+          </Link>
         </HStack>
       )}
     </HStack>

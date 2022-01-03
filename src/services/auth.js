@@ -1,8 +1,8 @@
-import axios from 'axios';
+import backendClient from './http';
 
 export const login = async (email, password) => {
   try {
-    const response = await axios.post('/api/auth/local', {
+    const response = await backendClient.post('/api/auth/local', {
       identifier: email,
       password,
     });
