@@ -1,34 +1,32 @@
 import './App.css';
-import { useState } from 'react';
 import TopBar from './components/TopBar';
-import SideBar from './components/SideBar';
-import LoginRegister from './components/LoginRegister';
-import { HStack, Heading } from '@chakra-ui/layout';
 import '@fontsource/poppins';
+import AuthContextProvider from './components/AuthContextProvider';
+import MainContent from './components/MainContent';
+import Login from './components/Login';
+import Register from './components/Register';
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 
 const App = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [activeOption, setActiveOption] = useState('login');
   return (
-    <div className="App">
-      <TopBar
-        isLoggedIn={isLoggedIn}
-        setIsLoggedIn={setIsLoggedIn}
-        setActiveOption={setActiveOption}
-      />
-      {isLoggedIn ? (
-        <HStack>
-          <SideBar w="10vw" isLoggedIn={isLoggedIn} />
-          <Heading w="80vw">Main content</Heading>
-        </HStack>
-      ) : (
-        <LoginRegister
-          setIsLoggedIn={setIsLoggedIn}
-          activeOption={activeOption}
-          setActiveOption={setActiveOption}
-        />
-      )}
-    </div>
+    <Router>
+      <AuthContextProvider>
+        <div className="App">
+          <TopBar />
+          <Switch>
+            <Route exact path="/">
+              <MainContent />
+            </Route>
+            <Route exact path="/login">
+              <Login />
+            </Route>
+            <Route exact path="/register">
+              <Register />
+            </Route>
+          </Switch>
+        </div>
+      </AuthContextProvider>
+    </Router>
   );
 };
 

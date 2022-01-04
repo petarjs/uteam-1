@@ -1,13 +1,18 @@
-import { Heading } from "@chakra-ui/layout";
+import { Heading, HStack } from '@chakra-ui/layout';
+import SideBar from './SideBar';
+import { useAuthContext } from './AuthContextProvider';
+import { Redirect } from 'react-router-dom/';
 
-const MainContent = ({setActiveOption}) => {
+const MainContent = () => {
+  const { isLoggedIn } = useAuthContext();
+  if (!isLoggedIn) {
+    return <Redirect to="/login" />;
+  }
   return (
-    {
-        !isLoggedIn ?
-        <Heading>User is logged in</Heading> 
-        :
-        <Heading>Choose item in menu</Heading> 
-    }
+    <HStack>
+      <SideBar w="10vw" />
+      <Heading w="80vw">Main content</Heading>
+    </HStack>
   );
 };
 
