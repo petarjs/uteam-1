@@ -14,11 +14,12 @@ import {
 
 import { useRef, useState } from 'react';
 import { useAuthContext } from './AuthContextProvider';
+import { Link } from 'react-router-dom';
 
 const Register = () => {
   const filePicker = useRef(null);
   const [showPassword, setShowPassword] = useState(false);
-  const { handleLogin, setActiveOption } = useAuthContext();
+  const { handleLogin } = useAuthContext();
   const handleShowPasswordChange = () => {
     setShowPassword(!showPassword);
   };
@@ -125,14 +126,11 @@ const Register = () => {
                 </Button>
                 <Input id="email" type="file" ref={filePicker} d="none" />
               </InputGroup>
-              <FormHelperText
-                textAlign="left"
-                mt="10"
-                mb="3"
-                onClick={() => setActiveOption('login')}
-              >
-                Already have an account?
-              </FormHelperText>
+              <Link to="/login">
+                <FormHelperText textAlign="left" mt="10" mb="3" cursor="pointer">
+                  Already have an account?
+                </FormHelperText>
+              </Link>
             </FormControl>
             <Button
               _focus="outline-none"
