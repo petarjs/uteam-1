@@ -10,19 +10,33 @@ import {
   Input,
   FormHelperText,
   FormLabel,
+  Text,
 } from '@chakra-ui/react';
-
+import { useForm } from 'react-hook-form';
 import { useRef, useState } from 'react';
 import { useAuthContext } from './AuthContextProvider';
-import { Link } from 'react-router-dom';
+import { Redirect, Link } from 'react-router-dom';
 
 const Register = () => {
   const filePicker = useRef(null);
   const [showPassword, setShowPassword] = useState(false);
-  const { handleLogin } = useAuthContext();
+  const { handleUserRegister, isLoggedIn } = useAuthContext();
   const handleShowPasswordChange = () => {
     setShowPassword(!showPassword);
   };
+  const {
+    register,
+    handleSubmit,
+
+    formState: { errors },
+  } = useForm();
+
+  const onSubmit = (data) => {
+    handleUserRegister(data.name, data.email, data.password);
+  };
+  if (isLoggedIn) {
+    return <Redirect to="/" />;
+  }
   return (
     <VStack w="100%" h="100vh" mx="left" bgGradient="linear(to-r, #E8F6EF, #E8F6EF)">
       <Box
@@ -38,7 +52,7 @@ const Register = () => {
         <Heading color="#2FE1D6" mb="8" textShadow="1px 1px #e0e0e0">
           Register
         </Heading>
-        <form onSubmit={(e) => handleLogin(e)}>
+        <form onSubmit={handleSubmit(onSubmit)}>
           <VStack>
             {/* Name */}
             <InputGroup>
@@ -47,7 +61,12 @@ const Register = () => {
                 pointerEvents="none"
                 children={<i className="fas fa-signature"></i>}
               />
-              <Input borderColor="#2FE1D6" type="text" placeholder="Name" />
+              <Input
+                borderColor="#2FE1D6"
+                type="text"
+                placeholder="Name"
+                {...register('name', { required: true })}
+              />
             </InputGroup>
             {/* Email */}
             <FormControl>
@@ -57,7 +76,12 @@ const Register = () => {
                   pointerEvents="none"
                   children={<i className="fas fa-user-alt"></i>}
                 />
-                <Input borderColor="#2FE1D6" type="email" placeholder="Email address" />
+                <Input
+                  borderColor="#2FE1D6"
+                  type="email"
+                  placeholder="Email address"
+                  {...register('email', { required: true })}
+                />
               </InputGroup>
             </FormControl>
             {/* Password */}
@@ -72,6 +96,7 @@ const Register = () => {
                   borderColor="#2FE1D6"
                   type={showPassword ? 'text' : 'password'}
                   placeholder="Password"
+                  {...register('password', { required: true })}
                 />
                 <InputRightElement width="4.5rem">
                   <Button
@@ -149,6 +174,11 @@ const Register = () => {
               Register
             </Button>
           </VStack>
+          {(errors.name || errors.email || errors.password) && (
+            <Text color="red" fontSize="15px" mt={3}>
+              This field is required
+            </Text>
+          )}
         </form>
       </Box>
     </VStack>

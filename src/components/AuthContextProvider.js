@@ -3,6 +3,7 @@ import { createContext, useContext, useState } from 'react';
 export const AuthContext = createContext();
 export const useAuthContext = () => useContext(AuthContext);
 import { login } from '../services/auth';
+import { userRegister } from '../services/reg';
 
 const AuthContextProvider = ({ children }) => {
   const [errorVisible, setErrorVisible] = useState(false);
@@ -30,6 +31,21 @@ const AuthContextProvider = ({ children }) => {
       setErrorVisible(true);
     }
   };
+
+  const handleUserRegister = async (name, email, password) => {
+    try {
+      await userRegister(name, email, password);
+
+      // Not using handle login function because it requires event in order to prevent default behaviour
+      const authenticatedUser = await login(email, password);
+      setJwt(authenticatedUser.jwt);
+      setUserData(authenticatedUser.user);
+      setIsLoggedIn(true);
+      setActiveOption(null);
+    } catch (error) {
+      console.error(error);
+    }
+  };
   return (
     <AuthContext.Provider
       value={{
@@ -41,6 +57,7 @@ const AuthContextProvider = ({ children }) => {
         activeOption,
         setActiveOption,
         errorVisible,
+        handleUserRegister,
       }}
     >
       {children}
