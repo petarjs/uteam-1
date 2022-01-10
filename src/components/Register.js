@@ -20,6 +20,9 @@ import { Redirect, Link } from 'react-router-dom';
 const Register = () => {
   const filePicker = useRef(null);
   const [showPassword, setShowPassword] = useState(false);
+  const [files, setFiles] = useState();
+  const [errorVisible, setErrorVisible] = useState(false);
+  const [duplicateCredentials, setDuplicateCredentials] = useState(false);
   const { handleUserRegister, isLoggedIn } = useAuthContext();
   const handleShowPasswordChange = () => {
     setShowPassword(!showPassword);
@@ -31,9 +34,25 @@ const Register = () => {
     formState: { errors },
   } = useForm();
 
-  const onSubmit = (data) => {
-    handleUserRegister(data.name, data.email, data.password);
+  const onSubmit = async (data) => {
+    const formData = new FormData();
+    if (!files) {
+      setErrorVisible(true);
+      return;
+    }
+    formData.append('files', files[0]);
+    const registrationSuccessfull = await handleUserRegister(
+      formData,
+      data.company,
+      data.name,
+      data.email,
+      data.password
+    );
+    if (!registrationSuccessfull) {
+      setDuplicateCredentials(true);
+    }
   };
+
   if (isLoggedIn) {
     return <Redirect to="/" />;
   }
@@ -84,6 +103,20 @@ const Register = () => {
                 />
               </InputGroup>
             </FormControl>
+            {/*Company*/}
+            <InputGroup>
+              <InputLeftElement
+                color="gray.300"
+                pointerEvents="none"
+                children={<i className="fas fa-suitcase"></i>}
+              />
+              <Input
+                borderColor="#2FE1D6"
+                type="text"
+                placeholder="Company"
+                {...register('company', { required: true })}
+              />
+            </InputGroup>
             {/* Password */}
             <FormControl>
               <InputGroup>
@@ -115,6 +148,7 @@ const Register = () => {
                   </Button>
                 </InputRightElement>
               </InputGroup>
+
               {/* Upload */}
               <InputGroup
                 justifyContent="space-between"
@@ -131,7 +165,7 @@ const Register = () => {
                   color="#CBD5E0"
                   fontWeight="semibold"
                 >
-                  Upload File
+                  {files ? files[0].name : 'Upload File'}
                 </FormLabel>
                 <Button
                   _focus="outline-none"
@@ -149,7 +183,13 @@ const Register = () => {
                 >
                   Choose Photo
                 </Button>
-                <Input id="email" type="file" ref={filePicker} d="none" />
+                <Input
+                  id="photo"
+                  type="file"
+                  ref={filePicker}
+                  d="none"
+                  onChange={(e) => setFiles(e.target.files)}
+                />
               </InputGroup>
               <Link to="/login">
                 <FormHelperText textAlign="left" mt="10" mb="3" cursor="pointer">
@@ -174,9 +214,14 @@ const Register = () => {
               Register
             </Button>
           </VStack>
-          {(errors.name || errors.email || errors.password) && (
+          {(errors.name || errors.email || errors.password || errorVisible) && (
             <Text color="red" fontSize="15px" mt={3}>
               This field is required
+            </Text>
+          )}
+          {duplicateCredentials && (
+            <Text color="red" fontSize="15px" mt={3}>
+              Email/Username already used
             </Text>
           )}
         </form>

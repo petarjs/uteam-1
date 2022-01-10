@@ -3,7 +3,10 @@ import { createContext, useContext, useState } from 'react';
 export const AuthContext = createContext();
 export const useAuthContext = () => useContext(AuthContext);
 import { login } from '../services/auth';
-import { userRegister } from '../services/reg';
+import { userRegister } from '../services/register';
+import { registerCompany } from '../services/company';
+import { uploadPhoto } from '../services/upload';
+import { createProfile } from '../services/profile';
 
 const AuthContextProvider = ({ children }) => {
   const [errorVisible, setErrorVisible] = useState(false);
@@ -32,19 +35,39 @@ const AuthContextProvider = ({ children }) => {
     }
   };
 
-  const handleUserRegister = async (name, email, password) => {
+  const handleUserRegister = async (formData, company, name, email, password) => {
+    let registerResponse;
     try {
-      await userRegister(name, email, password);
+      registerResponse = await userRegister(name, email, password);
+    } catch (error) {
+      return false;
+    }
 
-      // Not using handle login function because it requires event in order to prevent default behaviour
-      const authenticatedUser = await login(email, password);
-      setJwt(authenticatedUser.jwt);
-      setUserData(authenticatedUser.user);
+    const companyResponse = await registerCompany(company);
+    const photoResponse = await uploadPhoto(formData);
+
+    let profileResponse;
+    if (
+      registerResponse.status === 200 &&
+      companyResponse.status === 200 &&
+      photoResponse.status === 200
+    ) {
+      profileResponse = await createProfile(
+        registerResponse.data.user.id,
+        companyResponse.data.data.id,
+        photoResponse.data[0].id
+      );
+    }
+
+    if (profileResponse.status === 200) {
+      setJwt(registerResponse.jwt);
+      setUserData(registerResponse.user);
       setIsLoggedIn(true);
       setActiveOption(null);
-    } catch (error) {
-      console.error(error);
+      return true;
     }
+
+    return false;
   };
   return (
     <AuthContext.Provider
