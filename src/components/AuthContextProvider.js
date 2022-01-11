@@ -36,38 +36,25 @@ const AuthContextProvider = ({ children }) => {
   };
 
   const handleUserRegister = async (formData, company, name, email, password) => {
-    let registerResponse;
     try {
-      registerResponse = await userRegister(name, email, password);
-    } catch (error) {
-      return false;
-    }
-
-    const companyResponse = await registerCompany(company);
-    const photoResponse = await uploadPhoto(formData);
-
-    let profileResponse;
-    if (
-      registerResponse.status === 200 &&
-      companyResponse.status === 200 &&
-      photoResponse.status === 200
-    ) {
-      profileResponse = await createProfile(
+      const [registerResponse, companyResponse, photoResponse] = await Promise.all([
+        userRegister(name, email, password),
+        registerCompany(company),
+        uploadPhoto(formData),
+      ]);
+      await createProfile(
         registerResponse.data.user.id,
         companyResponse.data.data.id,
         photoResponse.data[0].id
       );
-    }
-
-    if (profileResponse.status === 200) {
       setJwt(registerResponse.jwt);
       setUserData(registerResponse.user);
       setIsLoggedIn(true);
       setActiveOption(null);
       return true;
+    } catch (error) {
+      return false;
     }
-
-    return false;
   };
   return (
     <AuthContext.Provider
