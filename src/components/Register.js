@@ -10,19 +10,52 @@ import {
   Input,
   FormHelperText,
   FormLabel,
+  Text,
 } from '@chakra-ui/react';
-
+import { useForm } from 'react-hook-form';
 import { useRef, useState } from 'react';
 import { useAuthContext } from './AuthContextProvider';
-import { Link } from 'react-router-dom';
+import { Redirect, Link } from 'react-router-dom';
 
 const Register = () => {
   const filePicker = useRef(null);
   const [showPassword, setShowPassword] = useState(false);
-  const { handleLogin } = useAuthContext();
+  const [files, setFiles] = useState();
+  const [errorVisible, setErrorVisible] = useState(false);
+  const [duplicateCredentials, setDuplicateCredentials] = useState(false);
+  const { handleUserRegister, isLoggedIn } = useAuthContext();
   const handleShowPasswordChange = () => {
     setShowPassword(!showPassword);
   };
+  const {
+    register,
+    handleSubmit,
+
+    formState: { errors },
+  } = useForm();
+
+  const onSubmit = async (data) => {
+    const formData = new FormData();
+    if (!files) {
+      setErrorVisible(true);
+      return;
+    }
+    formData.append('files', files[0]);
+    const registrationSuccessfull = await handleUserRegister(
+      formData,
+      data.company,
+      data.name,
+      data.email,
+      data.password
+    );
+    if (!registrationSuccessfull) {
+      setDuplicateCredentials(true);
+    }
+  };
+
+  if (isLoggedIn) {
+    return <Redirect to="/" />;
+  }
   return (
     <VStack w="100%" h="100vh" mx="left" bgGradient="linear(to-r, #E8F6EF, #E8F6EF)">
       <Box
@@ -38,7 +71,7 @@ const Register = () => {
         <Heading color="#2FE1D6" mb="8" textShadow="1px 1px #e0e0e0">
           Register
         </Heading>
-        <form onSubmit={(e) => handleLogin(e)}>
+        <form onSubmit={handleSubmit(onSubmit)}>
           <VStack>
             {/* Name */}
             <InputGroup>
@@ -47,7 +80,12 @@ const Register = () => {
                 pointerEvents="none"
                 children={<i className="fas fa-signature"></i>}
               />
-              <Input borderColor="#2FE1D6" type="text" placeholder="Name" />
+              <Input
+                borderColor="#2FE1D6"
+                type="text"
+                placeholder="Name"
+                {...register('name', { required: true })}
+              />
             </InputGroup>
             {/* Email */}
             <FormControl>
@@ -57,9 +95,28 @@ const Register = () => {
                   pointerEvents="none"
                   children={<i className="fas fa-user-alt"></i>}
                 />
-                <Input borderColor="#2FE1D6" type="email" placeholder="Email address" />
+                <Input
+                  borderColor="#2FE1D6"
+                  type="email"
+                  placeholder="Email address"
+                  {...register('email', { required: true })}
+                />
               </InputGroup>
             </FormControl>
+            {/*Company*/}
+            <InputGroup>
+              <InputLeftElement
+                color="gray.300"
+                pointerEvents="none"
+                children={<i className="fas fa-suitcase"></i>}
+              />
+              <Input
+                borderColor="#2FE1D6"
+                type="text"
+                placeholder="Company"
+                {...register('company', { required: true })}
+              />
+            </InputGroup>
             {/* Password */}
             <FormControl>
               <InputGroup>
@@ -72,6 +129,7 @@ const Register = () => {
                   borderColor="#2FE1D6"
                   type={showPassword ? 'text' : 'password'}
                   placeholder="Password"
+                  {...register('password', { required: true })}
                 />
                 <InputRightElement width="4.5rem">
                   <Button
@@ -90,6 +148,7 @@ const Register = () => {
                   </Button>
                 </InputRightElement>
               </InputGroup>
+
               {/* Upload */}
               <InputGroup
                 justifyContent="space-between"
@@ -106,7 +165,7 @@ const Register = () => {
                   color="#CBD5E0"
                   fontWeight="semibold"
                 >
-                  Upload File
+                  {files ? files[0].name : 'Upload File'}
                 </FormLabel>
                 <Button
                   _focus="outline-none"
@@ -124,7 +183,13 @@ const Register = () => {
                 >
                   Choose Photo
                 </Button>
-                <Input id="email" type="file" ref={filePicker} d="none" />
+                <Input
+                  id="photo"
+                  type="file"
+                  ref={filePicker}
+                  d="none"
+                  onChange={(e) => setFiles(e.target.files)}
+                />
               </InputGroup>
               <Link to="/login">
                 <FormHelperText textAlign="left" mt="10" mb="3" cursor="pointer">
@@ -149,6 +214,16 @@ const Register = () => {
               Register
             </Button>
           </VStack>
+          {(errors.name || errors.email || errors.password || errorVisible) && (
+            <Text color="red" fontSize="15px" mt={3}>
+              This field is required
+            </Text>
+          )}
+          {duplicateCredentials && (
+            <Text color="red" fontSize="15px" mt={3}>
+              Email/Username already used
+            </Text>
+          )}
         </form>
       </Box>
     </VStack>

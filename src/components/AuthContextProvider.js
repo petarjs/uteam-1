@@ -3,6 +3,10 @@ import { createContext, useContext, useState } from 'react';
 export const AuthContext = createContext();
 export const useAuthContext = () => useContext(AuthContext);
 import { login } from '../services/auth';
+import { userRegister } from '../services/register';
+import { registerCompany } from '../services/company';
+import { uploadPhoto } from '../services/upload';
+import { createProfile } from '../services/profile';
 
 const AuthContextProvider = ({ children }) => {
   const [errorVisible, setErrorVisible] = useState(false);
@@ -30,6 +34,28 @@ const AuthContextProvider = ({ children }) => {
       setErrorVisible(true);
     }
   };
+
+  const handleUserRegister = async (formData, company, name, email, password) => {
+    try {
+      const [registerResponse, companyResponse, photoResponse] = await Promise.all([
+        userRegister(name, email, password),
+        registerCompany(company),
+        uploadPhoto(formData),
+      ]);
+      await createProfile(
+        registerResponse.data.user.id,
+        companyResponse.data.data.id,
+        photoResponse.data[0].id
+      );
+      setJwt(registerResponse.jwt);
+      setUserData(registerResponse.user);
+      setIsLoggedIn(true);
+      setActiveOption(null);
+      return true;
+    } catch (error) {
+      return false;
+    }
+  };
   return (
     <AuthContext.Provider
       value={{
@@ -41,6 +67,7 @@ const AuthContextProvider = ({ children }) => {
         activeOption,
         setActiveOption,
         errorVisible,
+        handleUserRegister,
       }}
     >
       {children}
