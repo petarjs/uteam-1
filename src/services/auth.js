@@ -1,4 +1,4 @@
-import backendClient from './http';
+import { backendClient } from './http';
 
 export const login = async (email, password) => {
   try {
