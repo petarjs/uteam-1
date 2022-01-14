@@ -7,7 +7,7 @@ import { registerCompany } from '../services/company';
 import { uploadPhoto } from '../services/upload';
 import { createProfile, getProfile } from '../services/profile';
 import { getUserInfo } from '../services/user';
-import { jwtInterceptor } from '../services/http';
+import { backendClient } from '../services/http';
 
 const AuthContextProvider = ({ children }) => {
   const [errorVisible, setErrorVisible] = useState(false);
@@ -18,6 +18,20 @@ const AuthContextProvider = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(jwt ? true : false);
   const [activeOption, setActiveOption] = useState('login');
 
+  let configValue;
+  backendClient.interceptors.request.use(
+    (config) => {
+      if (window.localStorage.getItem('jwt')) {
+        config.headers.Authorization = `Bearer ${window.localStorage.getItem('jwt')}`;
+        configValue = config;
+      }
+      return config;
+    },
+    (error) => {
+      return Promise.reject(error);
+    }
+  );
+
   const handleLogout = () => {
     window.localStorage.removeItem('jwt');
     window.localStorage.removeItem('userName');
@@ -26,7 +40,6 @@ const AuthContextProvider = ({ children }) => {
     setProfilePhoto('');
     setIsLoggedIn(false);
     setActiveOption('login');
-    location.reload();
   };
 
   const handleLogin = async (event, email, password) => {
@@ -39,19 +52,16 @@ const AuthContextProvider = ({ children }) => {
       setActiveOption(null);
       setErrorVisible(false);
 
-      jwtInterceptor(authenticatedUser.jwt);
       const userInfo = await getUserInfo();
       const userProfile = await getProfile(userInfo.data.id);
 
       window.localStorage.setItem(
         'profilePhoto',
-        'http://localhost:1337' +
-          userProfile.data.data[0].attributes.profilePhoto.data.attributes.url
+        configValue.baseURL + userProfile.data.data[0].attributes.profilePhoto.data.attributes.url
       );
       setProfilePhoto(window.localStorage.getItem('profilePhoto'));
       window.localStorage.setItem('userName', userInfo.data.username);
       setUserName(window.localStorage.getItem('userName'));
-
       setIsLoggedIn(true);
     } catch (error) {
       console.error(error);
@@ -75,14 +85,12 @@ const AuthContextProvider = ({ children }) => {
       setIsLoggedIn(true);
       setActiveOption(null);
       window.localStorage.setItem('jwt', registerResponse.data.jwt);
-      jwtInterceptor(registerResponse.data.jwt);
       const userInfo = await getUserInfo();
       const userProfile = await getProfile(userInfo.data.id);
 
       window.localStorage.setItem(
         'profilePhoto',
-        'http://localhost:1337' +
-          userProfile.data.data[0].attributes.profilePhoto.data.attributes.url
+        configValue.baseURL + userProfile.data.data[0].attributes.profilePhoto.data.attributes.url
       );
       setProfilePhoto(window.localStorage.getItem('profilePhoto'));
       window.localStorage.setItem('userName', userInfo.data.username);

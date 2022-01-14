@@ -12,16 +12,3 @@ export const backendClient = axios.create(
     },
   }
 );
-
-export const jwtInterceptor = (jwt) => {
-  backendClient.interceptors.request.use(
-    (config) => {
-      config.headers.Authorization = `Bearer ${jwt}`;
-
-      return config;
-    },
-    (error) => {
-      return Promise.reject(error);
-    }
-  );
-};
