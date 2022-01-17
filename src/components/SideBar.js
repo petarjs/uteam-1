@@ -1,4 +1,4 @@
-import { Heading, Text, Flex, Divider, Avatar, IconButton } from '@chakra-ui/react';
+import { Heading, Flex, Divider, Avatar, IconButton } from '@chakra-ui/react';
 
 import { useState } from 'react';
 
