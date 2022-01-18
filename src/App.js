@@ -1,31 +1,27 @@
 import './App.css';
 import TopBar from './components/TopBar';
 import '@fontsource/poppins';
-import AuthContextProvider from './components/AuthContextProvider';
-import MainContent from './components/MainContent';
 import Login from './components/Login';
 import Register from './components/Register';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import PrivateRoute from './components/PrivateRoute';
+import MainContent from './components/MainContent';
 
 const App = () => {
   return (
     <Router>
-      <AuthContextProvider>
-        <div className="App">
-          <TopBar />
-          <Switch>
-            <Route exact path="/">
-              <MainContent />
-            </Route>
-            <Route exact path="/login">
-              <Login />
-            </Route>
-            <Route exact path="/register">
-              <Register />
-            </Route>
-          </Switch>
-        </div>
-      </AuthContextProvider>
+      <div className="App">
+        <TopBar />
+        <Switch>
+          <PrivateRoute component={MainContent} path="/" exact />
+          <Route exact path="/login">
+            <Login />
+          </Route>
+          <Route exact path="/register">
+            <Register />
+          </Route>
+        </Switch>
+      </div>
     </Router>
   );
 };

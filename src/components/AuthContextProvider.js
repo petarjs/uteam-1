@@ -17,6 +17,7 @@ const AuthContextProvider = ({ children }) => {
   const [userData, setUserData] = useState();
   const [isLoggedIn, setIsLoggedIn] = useState(jwt ? true : false);
   const [activeOption, setActiveOption] = useState('login');
+  window.localStorage.setItem('isAuthenticated', 'false');
 
   let configValue;
   backendClient.interceptors.request.use(
@@ -39,6 +40,7 @@ const AuthContextProvider = ({ children }) => {
     setUserName('');
     setProfilePhoto('');
     setIsLoggedIn(false);
+    window.localStorage.setItem('isAuthenticated', 'false');
     setActiveOption('login');
   };
 
@@ -63,6 +65,7 @@ const AuthContextProvider = ({ children }) => {
       window.localStorage.setItem('userName', userInfo.data.username);
       setUserName(window.localStorage.getItem('userName'));
       setIsLoggedIn(true);
+      window.localStorage.setItem('isAuthenticated', 'true');
     } catch (error) {
       console.error(error);
       setErrorVisible(true);
