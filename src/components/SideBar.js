@@ -20,6 +20,8 @@ const SideBar = () => {
     }
   };
   const { profilePhoto, userName } = useAuthContext();
+  console.log('aaaa');
+  console.log(userName);
   const navItems = [
     {
       title: 'Pending',

@@ -12,10 +12,10 @@ import { backendClient } from '../services/http';
 const AuthContextProvider = ({ children }) => {
   const [errorVisible, setErrorVisible] = useState(false);
   const [jwt, setJwt] = useState(window.localStorage.getItem('jwt'));
-  const [userName, setUserName] = useState();
-  const [profilePhoto, setProfilePhoto] = useState();
+  const [userName, setUserName] = useState(window.localStorage.getItem('userName'));
+  const [profilePhoto, setProfilePhoto] = useState(window.localStorage.getItem('profilePhoto'));
   const [userData, setUserData] = useState();
-  const [isLoggedIn, setIsLoggedIn] = useState(jwt ? true : false);
+  const [isLoggedIn, setIsLoggedIn] = useState(window.localStorage.getItem('jwt') ? true : false);
   const [activeOption, setActiveOption] = useState('login');
   window.localStorage.setItem('isAuthenticated', 'false');
 
@@ -59,7 +59,9 @@ const AuthContextProvider = ({ children }) => {
 
       window.localStorage.setItem(
         'profilePhoto',
-        configValue.baseURL + userProfile.data.data[0].attributes.profilePhoto.data.attributes.url
+        // configValue.baseURL + userProfile.data.data[0].attributes.profilePhoto.data.attributes.url
+        'http://localhost:1337' +
+          userProfile.data.data[0].attributes.profilePhoto.data.attributes.url
       );
       setProfilePhoto(window.localStorage.getItem('profilePhoto'));
       window.localStorage.setItem('userName', userInfo.data.username);

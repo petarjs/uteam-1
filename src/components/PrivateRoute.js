@@ -1,12 +1,13 @@
 import React from 'react';
 import { Route, Redirect } from 'react-router-dom';
+import { useAuthContext } from './AuthContextProvider';
 
 const PrivateRoute = ({ component: Component, ...rest }) => {
-  const isAuthenticated = window.localStorage.getItem('isAuthenticated') === 'true';
+  const { isLoggedIn } = useAuthContext();
   return (
     <Route
       {...rest}
-      render={(props) => (isAuthenticated ? <Component {...props} /> : <Redirect to="/login" />)}
+      render={(props) => (isLoggedIn ? <Component {...props} /> : <Redirect to="/login" />)}
     />
   );
 };

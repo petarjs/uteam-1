@@ -2,7 +2,7 @@ import { backendClient } from './http';
 
 export const createProfile = async (userId, companyId, photoId) => {
   try {
-    const response = await backendClient.post('/api/profiles', {
+    const response = await backendClient.post('/profiles', {
       data: {
         profilePhoto: photoId,
         user: userId,
@@ -17,7 +17,7 @@ export const createProfile = async (userId, companyId, photoId) => {
 
 export const getProfile = async (userId) => {
   try {
-    const response = await backendClient.get('/api/profiles/', {
+    const response = await backendClient.get('/profiles/', {
       params: {
         'filters[user][id][$eq]': userId,
         populate: 'profilePhoto',

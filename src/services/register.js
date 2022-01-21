@@ -2,7 +2,7 @@ import { backendClient } from './http';
 
 export const userRegister = async (userName, email, password) => {
   try {
-    const response = await backendClient.post('/api/auth/local/register', {
+    const response = await backendClient.post('/auth/local/register', {
       username: userName,
       email: email,
       password: password,
