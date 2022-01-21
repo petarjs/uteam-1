@@ -1,8 +1,8 @@
-import backendClient from './http';
+import { backendClient } from './http';
 
 export const registerCompany = async (company) => {
   try {
-    const response = await backendClient.post('/api/companies', {
+    const response = await backendClient.post('/companies', {
       data: {
         name: company,
       },

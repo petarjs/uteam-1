@@ -1,4 +1,4 @@
-import { Heading, Text, Flex, Divider, Avatar, IconButton } from '@chakra-ui/react';
+import { Heading, Flex, Divider, Avatar, IconButton } from '@chakra-ui/react';
 
 import { useState } from 'react';
 
@@ -8,7 +8,7 @@ import { BsPatchQuestion } from 'react-icons/bs';
 import { RiTeamLine } from 'react-icons/ri';
 import NavItem from './NavItems';
 import { NAV_SIZE } from '../constants/index';
-
+import { useAuthContext } from './AuthContextProvider';
 const SideBar = () => {
   const [navSize, changeNavSize] = useState(NAV_SIZE.SMALL);
 
@@ -19,7 +19,7 @@ const SideBar = () => {
       changeNavSize(NAV_SIZE.SMALL);
     }
   };
-
+  const { profilePhoto, userName } = useAuthContext();
   const navItems = [
     {
       title: 'Pending',
@@ -92,12 +92,12 @@ const SideBar = () => {
       >
         <Divider display={navSize == NAV_SIZE.SMALL ? 'none' : 'flex'} />
         <Flex mt={4} align="center">
-          <Avatar size="sm" />
+          <Avatar width="50px" height="50px" src={profilePhoto} />
+
           <Flex flexDir="column" ml={4} display={navSize == NAV_SIZE.SMALL ? 'none' : 'flex'}>
             <Heading as="h3" size="sm" color="white">
-              UserName
+              {userName}
             </Heading>
-            <Text color="white">Admin</Text>
           </Flex>
         </Flex>
       </Flex>

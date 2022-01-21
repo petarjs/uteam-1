@@ -1,7 +1,13 @@
 import axios from 'axios';
 
-const baseURL = 'http://localhost:1337';
-const backendClient = axios.create(
+let baseURL;
+if (process.env.API_URL) {
+  baseURL = process.env.API_URL;
+} else {
+  baseURL = process.env.REACT_APP_LOCAL_API_URL;
+}
+
+export const backendClient = axios.create(
   {
     baseURL,
     timeout: 6000,
@@ -12,5 +18,3 @@ const backendClient = axios.create(
     },
   }
 );
-
-export default backendClient;

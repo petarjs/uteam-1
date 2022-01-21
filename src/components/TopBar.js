@@ -5,7 +5,6 @@ import { Link } from 'react-router-dom';
 
 const TopBar = () => {
   const { isLoggedIn, handleLogout } = useAuthContext();
-
   return (
     <HStack
       alignItems="stretch"
