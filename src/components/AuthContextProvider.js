@@ -19,12 +19,10 @@ const AuthContextProvider = ({ children }) => {
   const [activeOption, setActiveOption] = useState('login');
   window.localStorage.setItem('isAuthenticated', 'false');
 
-  let configValue;
   backendClient.interceptors.request.use(
     (config) => {
       if (window.localStorage.getItem('jwt')) {
         config.headers.Authorization = `Bearer ${window.localStorage.getItem('jwt')}`;
-        configValue = config;
       }
       return config;
     },
@@ -60,9 +58,11 @@ const AuthContextProvider = ({ children }) => {
       window.localStorage.setItem(
         'profilePhoto',
         // configValue.baseURL + userProfile.data.data[0].attributes.profilePhoto.data.attributes.url
-        'http://localhost:1337' +
+        process.env.REACT_APP_ASSET_URL +
           userProfile.data.data[0].attributes.profilePhoto.data.attributes.url
+        // process.env.REACT_APP_ASSET_URL + userProfile.data.data[0].attributes.profilePhoto.data.attributes.url
       );
+
       setProfilePhoto(window.localStorage.getItem('profilePhoto'));
       window.localStorage.setItem('userName', userInfo.data.username);
       setUserName(window.localStorage.getItem('userName'));
@@ -95,7 +95,8 @@ const AuthContextProvider = ({ children }) => {
 
       window.localStorage.setItem(
         'profilePhoto',
-        configValue.baseURL + userProfile.data.data[0].attributes.profilePhoto.data.attributes.url
+        process.env.REACT_APP_ASSET_URL +
+          userProfile.data.data[0].attributes.profilePhoto.data.attributes.url
       );
       setProfilePhoto(window.localStorage.getItem('profilePhoto'));
       window.localStorage.setItem('userName', userInfo.data.username);
