@@ -2,8 +2,10 @@ import { Flex, Text, Icon, Link, Menu, MenuButton, MenuList } from '@chakra-ui/r
 import NavHoverBox from '../components/NavHoverBox';
 import { NAV_SIZE } from '../constants/index';
 import { useState } from 'react';
+import { useAuthContext } from './AuthContextProvider';
 
 const NavItem = ({ navSize, title, icon, description }) => {
+  const { setActiveMainContent } = useAuthContext();
   const [active, setActive] = useState(false);
   const handleSetActiveChange = () => setActive(!active);
   return (
@@ -29,7 +31,12 @@ const NavItem = ({ navSize, title, icon, description }) => {
           }}
           w={navSize == NAV_SIZE.LARGE && '100%'}
         >
-          <MenuButton w="100%">
+          <MenuButton
+            w="100%"
+            onClick={() => {
+              setActiveMainContent(title);
+            }}
+          >
             <Flex>
               <Icon color="white" as={icon} fontSize="xl" />
               <Text ml={5} display={navSize == NAV_SIZE.SMALL ? 'none' : 'flex'} color="white">

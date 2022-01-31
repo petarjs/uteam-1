@@ -1,4 +1,3 @@
-import './App.css';
 import TopBar from './components/TopBar';
 import '@fontsource/poppins';
 import Login from './components/Login';

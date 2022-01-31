@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
 export const AuthContext = createContext();
 export const useAuthContext = () => useContext(AuthContext);
 import { login } from '../services/auth';
@@ -8,6 +8,7 @@ import { uploadPhoto } from '../services/upload';
 import { createProfile, getProfile } from '../services/profile';
 import { getUserInfo } from '../services/user';
 import { backendClient } from '../services/http';
+import { getQuestions } from '../services/questions';
 
 const AuthContextProvider = ({ children }) => {
   const [errorVisible, setErrorVisible] = useState(false);
@@ -17,6 +18,18 @@ const AuthContextProvider = ({ children }) => {
   const [userData, setUserData] = useState();
   const [isLoggedIn, setIsLoggedIn] = useState(window.localStorage.getItem('jwt') ? true : false);
   const [activeOption, setActiveOption] = useState('login');
+  const [activeMainContent, setActiveMainContent] = useState('Main content');
+  const [questions, setQuestions] = useState([]);
+
+  useEffect(async () => {
+    try {
+      const allQuestions = await getQuestions();
+      setQuestions(allQuestions.data);
+    } catch (error) {
+      return;
+    }
+  }, []);
+
   window.localStorage.setItem('isAuthenticated', 'false');
 
   backendClient.interceptors.request.use(
@@ -57,10 +70,9 @@ const AuthContextProvider = ({ children }) => {
 
       window.localStorage.setItem(
         'profilePhoto',
-        // configValue.baseURL + userProfile.data.data[0].attributes.profilePhoto.data.attributes.url
+
         process.env.REACT_APP_ASSET_URL +
           userProfile.data.data[0].attributes.profilePhoto.data.attributes.url
-        // process.env.REACT_APP_ASSET_URL + userProfile.data.data[0].attributes.profilePhoto.data.attributes.url
       );
 
       setProfilePhoto(window.localStorage.getItem('profilePhoto'));
@@ -120,6 +132,10 @@ const AuthContextProvider = ({ children }) => {
         handleUserRegister,
         profilePhoto,
         userName,
+        activeMainContent,
+        setActiveMainContent,
+        questions,
+        setQuestions,
       }}
     >
       {children}

@@ -33,7 +33,7 @@ const SideBar = () => {
     },
     {
       title: 'Questions',
-      description: 'Description for Questions item',
+      description: 'Feel free to add your question!',
       icon: BsPatchQuestion,
     },
     {
@@ -49,7 +49,8 @@ const SideBar = () => {
   ];
   return (
     <Flex
-      pos="sticky"
+      pos="fixed"
+      top="10vh"
       h="90vh"
       boxShadow="0 4px 12px 0 rgba(0,0,0,0.05)"
       w={navSize == 'small' ? '75px' : '200px'}
