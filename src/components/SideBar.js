@@ -25,26 +25,31 @@ const SideBar = () => {
       title: 'Pending',
       description: 'Description for Pending for approval item',
       icon: FaScribd,
+      link: '/pending',
     },
     {
       title: 'Team',
       description: 'Description for Team item',
       icon: RiTeamLine,
+      link: '/team',
     },
     {
       title: 'Questions',
       description: 'Feel free to add your question!',
       icon: BsPatchQuestion,
+      link: '/questions',
     },
     {
       title: 'Company Info',
       description: 'Description for Company Info item',
       icon: FiBriefcase,
+      link: '/companyInfo',
     },
     {
       title: 'My Profile',
       description: 'Description for My Profile item',
       icon: FiUser,
+      link: '/myProfile',
     },
   ];
   return (
@@ -74,13 +79,14 @@ const SideBar = () => {
           onClick={(e) => handleSideMenuSizeChange(e)}
         />
 
-        {navItems.map(({ title, description, icon }, index) => (
+        {navItems.map(({ title, description, icon, link }, index) => (
           <NavItem
             key={index}
             navSize={navSize}
             icon={icon}
             title={title}
             description={description}
+            link={link}
           />
         ))}
       </Flex>

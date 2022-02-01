@@ -1,11 +1,11 @@
 import { backendClient } from './http';
 
-export const postQuestion = async (question, order) => {
+export const postQuestion = async (question, option, order) => {
   try {
     const response = await backendClient.post('/questions', {
       data: {
         text: question,
-        type: 'text',
+        type: option,
         order: order,
       },
     });

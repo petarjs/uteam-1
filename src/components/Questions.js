@@ -5,7 +5,7 @@ import { postQuestion } from '../services/questions';
 
 const Questions = () => {
   const addQuestion = async (question) => {
-    const response = await postQuestion(question.text, question.order);
+    const response = await postQuestion(question.text, question.option, question.order);
     return response;
   };
 

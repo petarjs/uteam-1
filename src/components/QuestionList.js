@@ -1,10 +1,10 @@
 import { HStack, VStack, Text, IconButton, StackDivider, Spacer, Badge } from '@chakra-ui/react';
 import { FaTrash } from 'react-icons/fa';
-import { useAuthContext } from './AuthContextProvider';
+import { useQuestionContext } from './QuestionContextProvider';
 import { deleteQuestions } from '../services/questions';
 
 const QuestionList = () => {
-  const { questions, setQuestions } = useAuthContext();
+  const { questions, setQuestions } = useQuestionContext();
   if (!questions.length) {
     return (
       <Badge colorScheme="green" p="4" m="4" borderRadius="lg">
