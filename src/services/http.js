@@ -10,7 +10,7 @@ if (process.env.API_URL) {
 export const backendClient = axios.create(
   {
     baseURL,
-    timeout: 6000,
+    timeout: 66000,
   },
   {
     headers: {

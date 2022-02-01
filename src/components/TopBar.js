@@ -7,6 +7,8 @@ const TopBar = () => {
   const { isLoggedIn, handleLogout } = useAuthContext();
   return (
     <HStack
+      pos="fixed"
+      w="100vw"
       alignItems="stretch"
       bgGradient="linear(to-r, #38C6BD, #38C6BD, #97FFCF)"
       h="10vh"

@@ -1,12 +1,36 @@
-import { Heading, HStack } from '@chakra-ui/layout';
+import { Box } from '@chakra-ui/layout';
 import SideBar from './SideBar';
+import Questions from './Questions';
+import Pending from './Pending';
+import CompanyInfo from './CompanyInfo';
+import Team from './Team';
+import MyProfile from './MyProfile';
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 
 const MainContent = () => {
   return (
-    <HStack>
-      <SideBar w="10vw" />
-      <Heading w="80vw">Main content</Heading>
-    </HStack>
+    <Router>
+      <Box>
+        <SideBar w="10vw" pos="fixed" />
+        <Switch>
+          <Route path="/questions">
+            <Questions />
+          </Route>
+          <Route path="/pending">
+            <Pending />
+          </Route>
+          <Route path="/companyInfo">
+            <CompanyInfo />
+          </Route>
+          <Route path="/team">
+            <Team />
+          </Route>
+          <Route path="/myProfile">
+            <MyProfile />
+          </Route>
+        </Switch>
+      </Box>
+    </Router>
   );
 };
 
