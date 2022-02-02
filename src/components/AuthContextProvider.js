@@ -1,14 +1,13 @@
 import { createContext, useContext, useState } from 'react';
 export const AuthContext = createContext();
 export const useAuthContext = () => useContext(AuthContext);
-import { login } from '../services/auth';
+import { login, passwordChange } from '../services/auth';
 import { userRegister } from '../services/register';
 import { registerCompany } from '../services/company';
 import { uploadPhoto } from '../services/upload';
-import { createProfile, getProfile } from '../services/profile';
+import { createProfile, getProfile, editProfile } from '../services/profile';
 import { getUserInfo } from '../services/user';
 import { backendClient } from '../services/http';
-// import { getQuestions } from '../services/questions';
 
 const AuthContextProvider = ({ children }) => {
   const [errorVisible, setErrorVisible] = useState(false);
@@ -38,6 +37,7 @@ const AuthContextProvider = ({ children }) => {
     window.localStorage.removeItem('jwt');
     window.localStorage.removeItem('userName');
     window.localStorage.removeItem('profilePhoto');
+    window.localStorage.removeItem('profileId');
     setUserName('');
     setProfilePhoto('');
     setIsLoggedIn(false);
@@ -49,27 +49,68 @@ const AuthContextProvider = ({ children }) => {
     event.preventDefault();
     try {
       const authenticatedUser = await login(email, password);
-      setUserData(authenticatedUser.data);
-      setJwt(authenticatedUser.jwt);
-      window.localStorage.setItem('jwt', authenticatedUser.jwt);
+      setUserData(authenticatedUser.data.data);
+      setJwt(authenticatedUser.data.jwt);
+      window.localStorage.setItem('jwt', authenticatedUser.data.jwt);
+      window.localStorage.setItem('email', email);
       setActiveOption(null);
       setErrorVisible(false);
 
       const userInfo = await getUserInfo();
       const userProfile = await getProfile(userInfo.data.id);
 
+      console.log(userProfile);
+
+      window.localStorage.setItem('profileId', userProfile.data.data[0].id);
       window.localStorage.setItem(
         'profilePhoto',
 
         process.env.REACT_APP_ASSET_URL +
           userProfile.data.data[0].attributes.profilePhoto.data.attributes.url
       );
+      console.log(window.localStorage.getItem('profilePhoto'));
 
       setProfilePhoto(window.localStorage.getItem('profilePhoto'));
-      window.localStorage.setItem('userName', userInfo.data.username);
+      window.localStorage.setItem('userName', userProfile.data.data[0].attributes.name);
       setUserName(window.localStorage.getItem('userName'));
       setIsLoggedIn(true);
       window.localStorage.setItem('isAuthenticated', 'true');
+    } catch (error) {
+      console.error(error);
+      setErrorVisible(true);
+    }
+  };
+
+  const handlePasswordChange = async (currentPassword, newPassword) => {
+    try {
+      let authenticatedUser = await login(window.localStorage.getItem('email'), currentPassword);
+      if (authenticatedUser.status === 200) {
+        const userId = authenticatedUser.data.user.id;
+        console.log(userId);
+        await passwordChange(userId, newPassword);
+        authenticatedUser = await login(window.localStorage.getItem('email'), newPassword);
+        console.log(authenticatedUser);
+        window.localStorage.setItem('jwt', authenticatedUser.data.jwt);
+        setJwt(window.localStorage.getItem('jwt'));
+      }
+    } catch (error) {
+      console.error(error);
+      setErrorVisible(true);
+    }
+  };
+
+  const handleEditProfile = async (formData, userName, profileId) => {
+    try {
+      const photoResponse = await uploadPhoto(formData);
+      await editProfile(profileId, photoResponse.data[0].id, userName);
+      window.localStorage.setItem('userName', userName);
+      window.localStorage.setItem(
+        'profilePhoto',
+        process.env.REACT_APP_ASSET_URL + photoResponse.data[0].url
+      );
+
+      setProfilePhoto(window.localStorage.getItem('profilePhoto'));
+      setUserName(userName);
     } catch (error) {
       console.error(error);
       setErrorVisible(true);
@@ -86,7 +127,8 @@ const AuthContextProvider = ({ children }) => {
       await createProfile(
         registerResponse.data.user.id,
         companyResponse.data.data.id,
-        photoResponse.data[0].id
+        photoResponse.data[0].id,
+        name
       );
       setUserData(registerResponse.user);
       setIsLoggedIn(true);
@@ -124,6 +166,8 @@ const AuthContextProvider = ({ children }) => {
         userName,
         activeMainContent,
         setActiveMainContent,
+        handleEditProfile,
+        handlePasswordChange,
       }}
     >
       {children}
