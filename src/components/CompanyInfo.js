@@ -10,12 +10,15 @@ import {
   FormLabel,
   Input,
   Text,
+  Image,
 } from '@chakra-ui/react';
 import { useToast } from '@chakra-ui/react';
 import { useForm } from 'react-hook-form';
 import { useRef, useState } from 'react';
 import { FiBriefcase } from 'react-icons/fi';
 import { useAuthContext } from './AuthContextProvider';
+import leafImage from '../assets/leaf.png';
+import cloudImage from '../assets/cloud.png';
 
 const CompanyInfo = () => {
   const toast = useToast();
@@ -49,20 +52,49 @@ const CompanyInfo = () => {
   };
 
   return (
-    <VStack pt="10vh">
+    <VStack pt="14vh">
       <Heading
         mb={['32px !important']}
-        fontWeight="extrabold"
+        fontWeight="bold"
         size="2xl"
-        bgGradient="linear(to-r, #38C6BD, pink.300, #38C6BD)"
+        bgGradient="linear(to-r, #87d4cd, #38C6BD, #87d4cd)"
         bgClip="text"
+        position="relative"
+        zIndex="1"
+        pb="6px"
       >
         Company Info
       </Heading>
+      <Image
+        src={leafImage}
+        alt="brand"
+        position="absolute"
+        top="100px"
+        left="90px"
+        zIndex="0"
+        height="30vh"
+      />
+      <Image
+        src={cloudImage}
+        alt="brand"
+        position="absolute"
+        bottom="-100px"
+        right="60px"
+        zIndex="0"
+        height="30vh"
+      />
       <form onSubmit={handleSubmit(onSubmit)}>
-        <VStack p="20px" bg="#3e9e98" border="2px solid gray" borderRadius="20px">
-          <Box bg="gray.200" borderRadius="10px" w="100%" p="10px" mb="10px">
-            <Text alignSelf="flex-start" color="#3e9e98" fontWeight="bold" fontSize="20px">
+        <VStack
+          border="4px solid white"
+          pt="0px"
+          pb="20px"
+          bg="#87d4cd"
+          borderRadius="20px"
+          w="70vw"
+          position="relative"
+        >
+          <Box bg="gray.200" borderRadius="13px" w="100%" p="10px" mb="10px" textAlign="center">
+            <Text color="#3e9e98" fontWeight="bold" fontSize="20px">
               Edit company informations
             </Text>
           </Box>
@@ -110,6 +142,7 @@ const CompanyInfo = () => {
                 >
                   {files ? files[0].name : 'Upload File'}
                 </FormLabel>
+
                 <Button
                   _focus="outline-none"
                   _hover={{
@@ -139,9 +172,11 @@ const CompanyInfo = () => {
                   This field is required
                 </Text>
               )}
+
               <Button
+                style={{ marginTop: '35px' }}
                 _hover={{
-                  background: 'white',
+                  background: '#e0e0e0',
                 }}
                 color="gray"
                 textShadow="1px 1px #e0e0e0"
@@ -150,6 +185,7 @@ const CompanyInfo = () => {
                 variant="solid"
                 bg="white"
                 borderRadius="10px"
+                // style="margin-top: 35px;"
               >
                 Save
               </Button>

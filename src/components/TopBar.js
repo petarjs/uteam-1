@@ -8,12 +8,15 @@ const TopBar = () => {
   return (
     <HStack
       pos="fixed"
+      zIndex="2"
       w="100vw"
       alignItems="stretch"
       bgGradient="linear(to-r, #38C6BD, #38C6BD, #97FFCF)"
       h="10vh"
       borderBottom="3px solid"
       borderColor="white"
+      top="0"
+      left="0"
     >
       <HStack color="White" fontWeight={'extrabold'} pl={10}>
         {companyLogo && companyLogo != 'false' ? (
