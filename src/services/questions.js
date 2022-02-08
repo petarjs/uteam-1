@@ -31,3 +31,17 @@ export const deleteQuestions = async (id) => {
     throw `Unable to delete question: ${error}`;
   }
 };
+
+export const editQuestion = async (id, question, option) => {
+  try {
+    const response = await backendClient.put(`/questions/${id}`, {
+      data: {
+        text: question,
+        type: option,
+      },
+    });
+    return response;
+  } catch (error) {
+    throw `Unable to edit question: ${error}`;
+  }
+};

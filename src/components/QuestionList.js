@@ -1,4 +1,14 @@
-import { HStack, VStack, Text, IconButton, StackDivider, Spacer, Badge } from '@chakra-ui/react';
+import {
+  HStack,
+  VStack,
+  Text,
+  IconButton,
+  StackDivider,
+  Spacer,
+  Badge,
+  Button,
+} from '@chakra-ui/react';
+import { Link } from 'react-router-dom';
 import { FaTrash } from 'react-icons/fa';
 import { useQuestionContext } from './QuestionContextProvider';
 import { deleteQuestions } from '../services/questions';
@@ -19,6 +29,12 @@ const QuestionList = () => {
     });
     setQuestions(newQuestions);
   };
+
+  const setQuestion = async (id, text) => {
+    window.localStorage.setItem('questionId', id);
+    window.localStorage.setItem('questionText', text);
+  };
+
   return (
     <VStack
       divider={<StackDivider />}
@@ -30,10 +46,23 @@ const QuestionList = () => {
       maxW={{ base: '90vw', sm: '80vw', lg: '50vw', xl: '40vw' }}
       alignItems="stretch"
     >
-      {questions.map((questions) => (
+      {questions.map((questions, questionNumber = 0) => (
         <HStack key={questions.id}>
-          <Text>{questions.attributes.text}</Text>
+          <VStack alignItems="flex-start">
+            <Text fontSize="10px" color="gray.300">
+              Question {questionNumber + 1} - {questions.attributes.type}
+            </Text>
+
+            <Text>{questions.attributes.text}</Text>
+          </VStack>
+
           <Spacer />
+          <Link to="/editQuestions">
+            <Button onClick={() => setQuestion(questions.id, questions.attributes.text)}>
+              Edit
+            </Button>
+          </Link>
+
           <IconButton
             icon={<FaTrash />}
             isRound="true"

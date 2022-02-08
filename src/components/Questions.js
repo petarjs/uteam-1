@@ -10,15 +10,18 @@ const Questions = () => {
   };
 
   return (
-    <VStack pt="10vh">
+    <VStack pt="14vh">
       <Heading
         mb={['32px !important']}
-        fontWeight="extrabold"
+        fontWeight="bold"
         size="2xl"
-        bgGradient="linear(to-r, #38C6BD, pink.300, #38C6BD)"
+        bgGradient="linear(to-r, #87d4cd, #38C6BD, #87d4cd)"
         bgClip="text"
+        position="relative"
+        zIndex="1"
+        pb="6px"
       >
-        Add your question
+        Questions
       </Heading>
       <QuestionList />
       <AddQuestion addQuestion={addQuestion} />;

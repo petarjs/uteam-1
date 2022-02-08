@@ -30,6 +30,7 @@ const AddQuestion = ({ addQuestion }) => {
     };
     try {
       const createdQuestion = await addQuestion(question);
+
       setQuestions([...questions, createdQuestion.data]);
       reset();
     } catch (error) {
@@ -46,7 +47,7 @@ const AddQuestion = ({ addQuestion }) => {
           type="text"
           {...register('text', { required: true })}
         />
-        <Button colorScheme="pink" px="8" type="submit">
+        <Button bg="#87d4cd" px="8" type="submit" color="white" cursor="pointer">
           Add Question
         </Button>
       </HStack>
