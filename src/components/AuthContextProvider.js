@@ -43,6 +43,7 @@ const AuthContextProvider = ({ children }) => {
     window.localStorage.removeItem('companyId');
     window.localStorage.removeItem('company');
     window.localStorage.removeItem('companyLogo');
+    window.localStorage.removeItem('allQuestions');
     setCompanyLogo(false);
     setUserName('');
     setProfilePhoto('');

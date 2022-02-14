@@ -7,16 +7,20 @@ import { getQuestions } from '../services/questions';
 const QuestionContextProvider = ({ children }) => {
   const [questions, setQuestions] = useState([]);
 
-  useEffect(async () => {
-    try {
-      const allQuestions = await getQuestions();
-      setQuestions(allQuestions.data);
-    } catch (error) {
-      return;
-    }
-  }, []);
+  const handleGetQuestions = async () => {
+    useEffect(async () => {
+      try {
+        const allQuestions = await getQuestions(window.localStorage.getItem('companyId'));
+        window.localStorage.setItem('allQuestions', JSON.stringify(allQuestions.data));
+        setQuestions(JSON.parse(window.localStorage.getItem('allQuestions')));
+      } catch (error) {
+        return;
+      }
+    }, []);
+  };
+
   return (
-    <QuestionContext.Provider value={{ questions, setQuestions }}>
+    <QuestionContext.Provider value={{ questions, setQuestions, handleGetQuestions }}>
       {children}
     </QuestionContext.Provider>
   );

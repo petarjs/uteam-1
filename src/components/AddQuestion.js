@@ -27,6 +27,7 @@ const AddQuestion = ({ addQuestion }) => {
       text: data.text,
       option: data.option,
       order: newOrder,
+      company: window.localStorage.getItem('companyId'),
     };
     try {
       const createdQuestion = await addQuestion(question);

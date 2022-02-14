@@ -1,12 +1,13 @@
 import { backendClient } from './http';
 
-export const postQuestion = async (question, option, order) => {
+export const postQuestion = async (question, option, order, companyId) => {
   try {
     const response = await backendClient.post('/questions', {
       data: {
         text: question,
         type: option,
         order: order,
+        company: companyId,
       },
     });
     return response.data;
@@ -15,9 +16,14 @@ export const postQuestion = async (question, option, order) => {
   }
 };
 
-export const getQuestions = async () => {
+export const getQuestions = async (companyId) => {
   try {
-    const response = await backendClient.get('/questions');
+    const response = await backendClient.get('/questions', {
+      params: {
+        'filters[company][id][$eq]': companyId,
+        populate: ['company'],
+      },
+    });
     return response.data;
   } catch (error) {
     throw `Unable to get questions: ${error}`;
