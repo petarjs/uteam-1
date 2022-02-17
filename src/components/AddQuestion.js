@@ -4,11 +4,7 @@ import { useForm } from 'react-hook-form';
 import { useQuestionContext } from './QuestionContextProvider';
 
 const AddQuestion = ({ addQuestion }) => {
-  const { questions, setQuestions } = useQuestionContext();
-
-  const getUniqueOrder = () => {
-    return Date.now() + (Math.random() * 100000).toFixed();
-  };
+  const { questions, setQuestions, maximumOrder, setMaximumOrder } = useQuestionContext();
 
   const {
     register,
@@ -21,18 +17,21 @@ const AddQuestion = ({ addQuestion }) => {
   const onSubmit = async (data) => {
     const formData = new FormData();
 
-    let newOrder = getUniqueOrder();
     const question = {
       formData,
       text: data.text,
       option: data.option,
-      order: newOrder,
+      order: maximumOrder + 1,
       company: window.localStorage.getItem('companyId'),
     };
+
+    setMaximumOrder(maximumOrder + 1);
+
     try {
       const createdQuestion = await addQuestion(question);
 
       setQuestions([...questions, createdQuestion.data]);
+
       reset();
     } catch (error) {
       console.log(error);

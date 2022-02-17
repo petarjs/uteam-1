@@ -3,7 +3,13 @@ export const AuthContext = createContext();
 export const useAuthContext = () => useContext(AuthContext);
 import { login, passwordChange } from '../services/auth';
 import { userRegister } from '../services/register';
-import { registerCompany, getCompnay, editCompany, getCompanyLogo } from '../services/company';
+import {
+  registerCompany,
+  getCompnay,
+  editCompany,
+  getCompanyLogo,
+  getAllCompanies,
+} from '../services/company';
 import { uploadPhoto } from '../services/upload';
 import { createProfile, getProfile, editProfile } from '../services/profile';
 import { getUserInfo } from '../services/user';
@@ -162,14 +168,35 @@ const AuthContextProvider = ({ children }) => {
 
   const handleUserRegister = async (formData, company, name, email, password) => {
     try {
-      const [registerResponse, companyResponse, photoResponse] = await Promise.all([
+      const [registerResponse, photoResponse, allCompaniesResponse] = await Promise.all([
         userRegister(name, email, password),
-        registerCompany(company),
         uploadPhoto(formData),
+        getAllCompanies(),
       ]);
+
+      let allCompanies = allCompaniesResponse.data.data.map((company) => ({
+        name: company.attributes.name,
+        id: company.id,
+      }));
+
+      if (allCompanies.length) {
+        for (let i = 0; i < allCompanies.length; i++) {
+          if (allCompanies[i].name === company) {
+            window.localStorage.setItem('companyId', allCompanies[i].id);
+            break;
+          } else {
+            let registerCompanyId = (await registerCompany(company)).data.data.id;
+            window.localStorage.setItem('companyId', registerCompanyId);
+          }
+        }
+      } else {
+        let registerCompanyId = (await registerCompany(company)).data.data.id;
+        window.localStorage.setItem('companyId', registerCompanyId);
+      }
+
       await createProfile(
         registerResponse.data.user.id,
-        companyResponse.data.data.id,
+        window.localStorage.getItem('companyId').toString(),
         photoResponse.data[0].id,
         name
       );

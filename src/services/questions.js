@@ -30,6 +30,15 @@ export const getQuestions = async (companyId) => {
   }
 };
 
+export const getAllQuestions = async () => {
+  try {
+    const response = await backendClient.get('/questions');
+    return response;
+  } catch (error) {
+    throw `Unable to get all questions: ${error}`;
+  }
+};
+
 export const deleteQuestions = async (id) => {
   try {
     await backendClient.delete(`/questions/${id}`);
@@ -49,5 +58,17 @@ export const editQuestion = async (id, question, option) => {
     return response;
   } catch (error) {
     throw `Unable to edit question: ${error}`;
+  }
+};
+
+export const changeQuestionOrder = async (id, newOrder) => {
+  try {
+    await backendClient.put(`/questions/${id}`, {
+      data: {
+        order: newOrder,
+      },
+    });
+  } catch (error) {
+    throw `Unable to reorder question: ${error}`;
   }
 };

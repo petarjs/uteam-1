@@ -12,6 +12,7 @@ export const registerCompany = async (company) => {
     throw `Company creation failed - ${error}`;
   }
 };
+
 export const getCompnay = async (userId) => {
   try {
     const response = await backendClient.get(`/profiles`, {
@@ -23,6 +24,19 @@ export const getCompnay = async (userId) => {
     return response;
   } catch (error) {
     throw `Get company failed- ${error}`;
+  }
+};
+
+export const getAllCompanies = async () => {
+  try {
+    const response = await backendClient.get('/companies', {
+      params: {
+        '[pagination][limit]': 100,
+      },
+    });
+    return response;
+  } catch (error) {
+    throw `Getting all companies failed - ${error}`;
   }
 };
 

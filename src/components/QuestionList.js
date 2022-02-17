@@ -12,12 +12,15 @@ import { Link } from 'react-router-dom';
 import { FaTrash } from 'react-icons/fa';
 import { CgArrowAlignV } from 'react-icons/cg';
 import { useQuestionContext } from './QuestionContextProvider';
-import { deleteQuestions } from '../services/questions';
+import { deleteQuestions, changeQuestionOrder } from '../services/questions';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 
 const QuestionList = () => {
-  const { questions, setQuestions, handleGetQuestions } = useQuestionContext();
+  const { questions, setQuestions, handleGetQuestions, maximumOrder, setMaximumOrder } =
+    useQuestionContext();
   handleGetQuestions();
+  let dropEndCounter = 1;
+
   if (!questions.length) {
     return (
       <Badge colorScheme="green" p="4" m="4" borderRadius="lg">
@@ -40,10 +43,19 @@ const QuestionList = () => {
 
   return (
     <DragDropContext
-      onDragEnd={(param) => {
+      onDragEnd={async (param) => {
         const sourceIndex = param.source.index;
         const destinationIndex = param.destination.index;
         questions.splice(destinationIndex, 0, questions.splice(sourceIndex, 1)[0]);
+        let newQuestionOrders = questions.map((question, i) => ({
+          id: question.id,
+          order: i + maximumOrder + 1,
+        }));
+
+        for (let j = 0; j < newQuestionOrders.length; j++) {
+          changeQuestionOrder(newQuestionOrders[j].id, newQuestionOrders[j].order);
+        }
+        setMaximumOrder(maximumOrder + newQuestionOrders.length);
       }}
     >
       <Droppable droppableId="droppable-1">
