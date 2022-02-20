@@ -3,13 +3,7 @@ export const AuthContext = createContext();
 export const useAuthContext = () => useContext(AuthContext);
 import { login, passwordChange } from '../services/auth';
 import { userRegister } from '../services/register';
-import {
-  registerCompany,
-  getCompnay,
-  editCompany,
-  getCompanyLogo,
-  getAllCompanies,
-} from '../services/company';
+import { registerCompany, getCompnay, editCompany, getCompanyLogo } from '../services/company';
 import { uploadPhoto } from '../services/upload';
 import { createProfile, getProfile, editProfile } from '../services/profile';
 import { getUserInfo } from '../services/user';
@@ -166,60 +160,79 @@ const AuthContextProvider = ({ children }) => {
     }
   };
 
-  const handleUserRegister = async (formData, company, name, email, password) => {
+  const handleUserRegister = async (formData, company, selectedCompany, name, email, password) => {
     try {
-      const [registerResponse, photoResponse, allCompaniesResponse] = await Promise.all([
-        userRegister(name, email, password),
-        uploadPhoto(formData),
-        getAllCompanies(),
-      ]);
+      if (company) {
+        const [registerResponse, companyResponse, photoResponse] = await Promise.all([
+          userRegister(name, email, password),
+          registerCompany(company),
+          uploadPhoto(formData),
+        ]);
+        await createProfile(
+          registerResponse.data.user.id,
+          companyResponse.data.data.id,
+          photoResponse.data[0].id,
+          name
+        );
+        setUserData(registerResponse.user);
+        setIsLoggedIn(true);
+        setActiveOption(null);
+        window.localStorage.setItem('jwt', registerResponse.data.jwt);
+        const userInfo = await getUserInfo();
+        const userProfile = await getProfile(userInfo.data.id);
 
-      let allCompanies = allCompaniesResponse.data.data.map((company) => ({
-        name: company.attributes.name,
-        id: company.id,
-      }));
-
-      if (allCompanies.length) {
-        for (let i = 0; i < allCompanies.length; i++) {
-          if (allCompanies[i].name === company) {
-            window.localStorage.setItem('companyId', allCompanies[i].id);
-            break;
-          } else {
-            let registerCompanyId = (await registerCompany(company)).data.data.id;
-            window.localStorage.setItem('companyId', registerCompanyId);
-          }
-        }
+        window.localStorage.setItem('company', company);
+        setCompany(window.localStorage.getItem('company'));
+        window.localStorage.setItem(
+          'profilePhoto',
+          process.env.REACT_APP_ASSET_URL +
+            userProfile.data.data[0].attributes.profilePhoto.data.attributes.url
+        );
+        setProfilePhoto(window.localStorage.getItem('profilePhoto'));
+        window.localStorage.setItem('userName', userInfo.data.username);
+        setUserName(window.localStorage.getItem('userName'));
       } else {
-        let registerCompanyId = (await registerCompany(company)).data.data.id;
-        window.localStorage.setItem('companyId', registerCompanyId);
+        const [registerResponse, photoResponse] = await Promise.all([
+          userRegister(name, email, password),
+          uploadPhoto(formData),
+        ]);
+        await createProfile(
+          registerResponse.data.user.id,
+          parseInt(selectedCompany),
+          photoResponse.data[0].id,
+          name
+        );
+        setUserData(registerResponse.user);
+        setIsLoggedIn(true);
+        setActiveOption(null);
+        window.localStorage.setItem('jwt', registerResponse.data.jwt);
+        const userInfo = await getUserInfo();
+        const userProfile = await getProfile(userInfo.data.id);
+        const registeredCompany = await getCompnay(parseInt(registerResponse.data.user.id));
+
+        window.localStorage.setItem(
+          'company',
+          registeredCompany.data.data[0].attributes.company.data.attributes.name
+        );
+
+        setCompany(window.localStorage.getItem('company'));
+
+        window.localStorage.setItem(
+          'profilePhoto',
+          process.env.REACT_APP_ASSET_URL +
+            userProfile.data.data[0].attributes.profilePhoto.data.attributes.url
+        );
+        setProfilePhoto(window.localStorage.getItem('profilePhoto'));
+        window.localStorage.setItem('userName', userInfo.data.username);
+        setUserName(window.localStorage.getItem('userName'));
       }
 
-      await createProfile(
-        registerResponse.data.user.id,
-        window.localStorage.getItem('companyId').toString(),
-        photoResponse.data[0].id,
-        name
-      );
-      setUserData(registerResponse.user);
-      setIsLoggedIn(true);
-      setActiveOption(null);
-      window.localStorage.setItem('jwt', registerResponse.data.jwt);
-      const userInfo = await getUserInfo();
-      const userProfile = await getProfile(userInfo.data.id);
-
-      window.localStorage.setItem(
-        'profilePhoto',
-        process.env.REACT_APP_ASSET_URL +
-          userProfile.data.data[0].attributes.profilePhoto.data.attributes.url
-      );
-      setProfilePhoto(window.localStorage.getItem('profilePhoto'));
-      window.localStorage.setItem('userName', userInfo.data.username);
-      setUserName(window.localStorage.getItem('userName'));
       return true;
     } catch (error) {
       return false;
     }
   };
+
   return (
     <AuthContext.Provider
       value={{

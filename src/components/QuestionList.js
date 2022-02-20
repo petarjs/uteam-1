@@ -19,7 +19,6 @@ const QuestionList = () => {
   const { questions, setQuestions, handleGetQuestions, maximumOrder, setMaximumOrder } =
     useQuestionContext();
   handleGetQuestions();
-  let dropEndCounter = 1;
 
   if (!questions.length) {
     return (

@@ -11,11 +11,13 @@ import {
   FormHelperText,
   FormLabel,
   Text,
+  Select,
 } from '@chakra-ui/react';
 import { useForm } from 'react-hook-form';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useAuthContext } from './AuthContextProvider';
 import { Redirect, Link } from 'react-router-dom';
+import { getAllCompanies } from '../services/company';
 
 const Register = () => {
   const filePicker = useRef(null);
@@ -24,18 +26,47 @@ const Register = () => {
   const [errorVisible, setErrorVisible] = useState(false);
   const [duplicateCredentials, setDuplicateCredentials] = useState(false);
   const { handleUserRegister, isLoggedIn } = useAuthContext();
+  const [companies, setCompanies] = useState([]);
+  const [selectedValue, setSelectedValue] = useState();
+  let allCompanies = [];
+
+  useEffect(async () => {
+    try {
+      const allCompaniesResponse = await getAllCompanies();
+      allCompanies = allCompaniesResponse.data.data.map((company) => ({
+        name: company.attributes.name,
+        id: company.id,
+      }));
+
+      setCompanies(allCompanies);
+    } catch (error) {
+      return;
+    }
+  }, []);
+
+  useEffect(() => {
+    reset({
+      company: '',
+    });
+  }, [selectedValue]);
+
+  const selectValue = () => {
+    setSelectedValue(document.getElementById('select').value);
+  };
+
   const handleShowPasswordChange = () => {
     setShowPassword(!showPassword);
   };
   const {
     register,
     handleSubmit,
-
+    reset,
     formState: { errors },
   } = useForm();
 
   const onSubmit = async (data) => {
     const formData = new FormData();
+
     if (!files) {
       setErrorVisible(true);
       return;
@@ -43,7 +74,8 @@ const Register = () => {
     formData.append('files', files[0]);
     const registrationSuccessfull = await handleUserRegister(
       formData,
-      data.company,
+      data.company === '' ? null : data.company,
+      data.selectCompany,
       data.name,
       data.email,
       data.password
@@ -111,12 +143,32 @@ const Register = () => {
                 children={<i className="fas fa-suitcase"></i>}
               />
               <Input
+                id="companyInput"
                 borderColor="#2FE1D6"
                 type="text"
                 placeholder="Company"
-                {...register('company', { required: true })}
+                disabled={selectedValue ? true : false}
+                {...register('company', { required: false })}
               />
             </InputGroup>
+            <Select
+              id="select"
+              onClick={selectValue}
+              borderColor="#2FE1D6"
+              bg="white"
+              color="gray.400"
+              mt="30px"
+              variant="filled"
+              w="100%"
+              placeholder="Select company"
+              {...register('selectCompany', { required: false })}
+            >
+              {companies.map((company) => (
+                <option key={company.id} value={company.id}>
+                  {company.name}
+                </option>
+              ))}
+            </Select>
             {/* Password */}
             <FormControl>
               <InputGroup>
