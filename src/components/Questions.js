@@ -1,7 +1,8 @@
-import { Heading, VStack } from '@chakra-ui/react';
+import { Heading, VStack, Button, HStack } from '@chakra-ui/react';
 import AddQuestion from './AddQuestion';
 import QuestionList from './QuestionList';
 import { postQuestion } from '../services/questions';
+import { Link } from 'react-router-dom';
 
 const Questions = () => {
   const addQuestion = async (question) => {
@@ -30,6 +31,13 @@ const Questions = () => {
       </Heading>
       <QuestionList />
       <AddQuestion addQuestion={addQuestion} />;
+      <HStack pt="10">
+        <Link to="/answers">
+          <Button bg="#87d4cd" px="10" type="submit" color="white" cursor="pointer">
+            Answer the Questions
+          </Button>
+        </Link>
+      </HStack>
     </VStack>
   );
 };

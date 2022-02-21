@@ -5,6 +5,7 @@ import Pending from './Pending';
 import CompanyInfo from './CompanyInfo';
 import Team from './Team';
 import MyProfile from './MyProfile';
+import Answers from './Answers';
 import EditQuestions from './EditQuestion';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 
@@ -31,6 +32,9 @@ const MainContent = () => {
           </Route>
           <Route path="/editQuestions">
             <EditQuestions />
+          </Route>
+          <Route path="/answers">
+            <Answers />
           </Route>
         </Switch>
       </Box>
