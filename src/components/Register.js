@@ -28,20 +28,23 @@ const Register = () => {
   const { handleUserRegister, isLoggedIn } = useAuthContext();
   const [companies, setCompanies] = useState([]);
   const [selectedValue, setSelectedValue] = useState();
-  let allCompanies = [];
 
-  useEffect(async () => {
-    try {
-      const allCompaniesResponse = await getAllCompanies();
-      allCompanies = allCompaniesResponse.data.data.map((company) => ({
-        name: company.attributes.name,
-        id: company.id,
-      }));
+  useEffect(() => {
+    async function findingAllCompanies() {
+      try {
+        const companiesResponse = await getAllCompanies();
+        let companies = companiesResponse.data.data.map((company) => ({
+          name: company.attributes.name,
+          id: company.id,
+        }));
 
-      setCompanies(allCompanies);
-    } catch (error) {
-      return;
+        setCompanies(companies);
+      } catch (error) {
+        return;
+      }
     }
+
+    findingAllCompanies();
   }, []);
 
   useEffect(() => {
