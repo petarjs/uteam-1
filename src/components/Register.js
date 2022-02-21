@@ -20,6 +20,13 @@ import { Redirect, Link } from 'react-router-dom';
 import { getAllCompanies } from '../services/company';
 
 const Register = () => {
+  const {
+    register,
+    handleSubmit,
+    reset,
+    watch,
+    formState: { errors },
+  } = useForm();
   const filePicker = useRef(null);
   const [showPassword, setShowPassword] = useState(false);
   const [files, setFiles] = useState();
@@ -27,7 +34,7 @@ const Register = () => {
   const [duplicateCredentials, setDuplicateCredentials] = useState(false);
   const { handleUserRegister, isLoggedIn } = useAuthContext();
   const [companies, setCompanies] = useState([]);
-  const [selectedValue, setSelectedValue] = useState();
+  const selectedValue = watch('selectCompany', false);
 
   useEffect(() => {
     async function findingAllCompanies() {
@@ -47,25 +54,9 @@ const Register = () => {
     findingAllCompanies();
   }, []);
 
-  useEffect(() => {
-    reset({
-      company: '',
-    });
-  }, [selectedValue]);
-
-  const selectValue = () => {
-    setSelectedValue(document.getElementById('select').value);
-  };
-
   const handleShowPasswordChange = () => {
     setShowPassword(!showPassword);
   };
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { errors },
-  } = useForm();
 
   const onSubmit = async (data) => {
     const formData = new FormData();
@@ -77,7 +68,7 @@ const Register = () => {
     formData.append('files', files[0]);
     const registrationSuccessfull = await handleUserRegister(
       formData,
-      data.company === '' ? null : data.company,
+      selectedValue === false || selectedValue === '' ? data.company : null,
       data.selectCompany,
       data.name,
       data.email,
@@ -155,8 +146,6 @@ const Register = () => {
               />
             </InputGroup>
             <Select
-              id="select"
-              onClick={selectValue}
               borderColor="#2FE1D6"
               bg="white"
               color="gray.400"
