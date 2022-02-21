@@ -41,13 +41,13 @@ const SideBar = () => {
     },
     {
       title: 'Company Info',
-      description: 'Description for Company Info item',
+      description: 'Edit company name and logo',
       icon: FiBriefcase,
       link: '/companyInfo',
     },
     {
       title: 'My Profile',
-      description: 'Description for My Profile item',
+      description: 'Edit profile name photo and password',
       icon: FiUser,
       link: '/myProfile',
     },
@@ -55,6 +55,7 @@ const SideBar = () => {
   return (
     <Flex
       pos="fixed"
+      zIndex="2"
       top="10vh"
       h="90vh"
       boxShadow="0 4px 12px 0 rgba(0,0,0,0.05)"

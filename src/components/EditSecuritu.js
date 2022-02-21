@@ -39,7 +39,15 @@ const EditSecurity = () => {
   };
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <VStack p="20px" bg="#3e9e98" border="2px solid gray" borderRadius="20px">
+      <VStack
+        pt="0px"
+        pb="20px"
+        bg="#87d4cd"
+        borderRadius="15px"
+        w="25vw"
+        position="relative"
+        border="4px solid white"
+      >
         <Box bg="gray.200" borderRadius="10px" w="100%" p="10px" mb="10px">
           <Text alignSelf="flex-start" color="#3e9e98" fontWeight="bold" fontSize="20px">
             Security
