@@ -12,7 +12,6 @@ import {
   Image,
   Badge,
   Textarea,
-  Flex,
 } from '@chakra-ui/react';
 
 import { useForm } from 'react-hook-form';
@@ -103,13 +102,13 @@ const Answers = () => {
         formData.append('files', finalAnswers[i][0].file[0]);
         const photoResponse = await uploadPhoto(formData);
         const photoId = photoResponse.data[0].id;
-        const answerResponse = await postAnswer(
+        await postAnswer(
           questions[i].id,
           window.localStorage.getItem('profileId'),
           photoId.toString()
         );
       } else {
-        const answerResponse = await postAnswer(
+        await postAnswer(
           questions[i].id,
           window.localStorage.getItem('profileId'),
           finalAnswers[i]
