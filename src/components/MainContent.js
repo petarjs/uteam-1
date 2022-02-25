@@ -7,6 +7,7 @@ import Team from './Team';
 import MyProfile from './MyProfile';
 import Answers from './Answers';
 import EditQuestions from './EditQuestion';
+import ModerateTeamMember from './ModerateTeamMember';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 
 const MainContent = () => {
@@ -35,6 +36,9 @@ const MainContent = () => {
           </Route>
           <Route path="/answers">
             <Answers />
+          </Route>
+          <Route path="/moderateTeamMember">
+            <ModerateTeamMember />
           </Route>
         </Switch>
       </Box>

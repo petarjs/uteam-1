@@ -5,7 +5,12 @@ import { login, passwordChange } from '../services/auth';
 import { userRegister } from '../services/register';
 import { registerCompany, getCompnay, editCompany, getCompanyLogo } from '../services/company';
 import { uploadPhoto } from '../services/upload';
-import { createProfile, getProfile, editProfile } from '../services/profile';
+import {
+  createProfile,
+  getProfile,
+  editProfile,
+  getProfilesFromCompnay,
+} from '../services/profile';
 import { getUserInfo } from '../services/user';
 import { backendClient } from '../services/http';
 
@@ -20,6 +25,9 @@ const AuthContextProvider = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(window.localStorage.getItem('jwt') ? true : false);
   const [activeOption, setActiveOption] = useState('login');
   const [activeMainContent, setActiveMainContent] = useState('Main content');
+  const [allCompaniesProfilesResponse, setAllCompaniesProfilesResponse] = useState(
+    JSON.parse(window.localStorage.getItem('allCompaniesProfiles'))
+  );
 
   window.localStorage.setItem('isAuthenticated', 'false');
 
@@ -44,6 +52,7 @@ const AuthContextProvider = ({ children }) => {
     window.localStorage.removeItem('company');
     window.localStorage.removeItem('companyLogo');
     window.localStorage.removeItem('allQuestions');
+    window.localStorage.removeItem('allCompaniesProfiles');
     setCompanyLogo(false);
     setUserName('');
     setProfilePhoto('');
@@ -92,6 +101,17 @@ const AuthContextProvider = ({ children }) => {
         userCompany.data.data[0].attributes.company.data.attributes.name
       );
       window.localStorage.setItem('companyId', userCompany.data.data[0].attributes.company.data.id);
+      const allCompaniesProfiles = await getProfilesFromCompnay(
+        window.localStorage.getItem('companyId')
+      );
+      window.localStorage.setItem(
+        'allCompaniesProfiles',
+        JSON.stringify(allCompaniesProfiles.data.data)
+      );
+
+      setAllCompaniesProfilesResponse(
+        JSON.parse(window.localStorage.getItem('allCompaniesProfiles'))
+      );
 
       setCompany(window.localStorage.getItem('company'));
       setProfilePhoto(window.localStorage.getItem('profilePhoto'));
@@ -168,12 +188,13 @@ const AuthContextProvider = ({ children }) => {
           registerCompany(company),
           uploadPhoto(formData),
         ]);
-        await createProfile(
+        const profileResponse = await createProfile(
           registerResponse.data.user.id,
           companyResponse.data.data.id,
           photoResponse.data[0].id,
           name
         );
+
         setUserData(registerResponse.user);
         setIsLoggedIn(true);
         setActiveOption(null);
@@ -188,6 +209,17 @@ const AuthContextProvider = ({ children }) => {
           process.env.REACT_APP_ASSET_URL +
             userProfile.data.data[0].attributes.profilePhoto.data.attributes.url
         );
+        const allCompaniesProfiles = await getProfilesFromCompnay(
+          window.localStorage.getItem('companyId')
+        );
+        window.localStorage.setItem(
+          'allCompaniesProfiles',
+          JSON.stringify(allCompaniesProfiles.data.data)
+        );
+
+        setAllCompaniesProfilesResponse(
+          JSON.parse(window.localStorage.getItem('allCompaniesProfiles'))
+        );
         setProfilePhoto(window.localStorage.getItem('profilePhoto'));
         window.localStorage.setItem('userName', userInfo.data.username);
         setUserName(window.localStorage.getItem('userName'));
@@ -196,12 +228,14 @@ const AuthContextProvider = ({ children }) => {
           userRegister(name, email, password),
           uploadPhoto(formData),
         ]);
-        await createProfile(
+        const profileResponse = await createProfile(
           registerResponse.data.user.id,
           parseInt(selectedCompany),
           photoResponse.data[0].id,
           name
         );
+
+        window.localStorage.setItem('profileId', profileResponse.data.data.id);
         setUserData(registerResponse.user);
         setIsLoggedIn(true);
         setActiveOption(null);
@@ -214,8 +248,24 @@ const AuthContextProvider = ({ children }) => {
           'company',
           registeredCompany.data.data[0].attributes.company.data.attributes.name
         );
+        window.localStorage.setItem(
+          'companyId',
+          registeredCompany.data.data[0].attributes.company.data.id
+        );
 
         setCompany(window.localStorage.getItem('company'));
+
+        const allCompaniesProfiles = await getProfilesFromCompnay(
+          window.localStorage.getItem('companyId')
+        );
+        window.localStorage.setItem(
+          'allCompaniesProfiles',
+          JSON.stringify(allCompaniesProfiles.data.data)
+        );
+
+        setAllCompaniesProfilesResponse(
+          JSON.parse(window.localStorage.getItem('allCompaniesProfiles'))
+        );
 
         window.localStorage.setItem(
           'profilePhoto',
@@ -254,6 +304,8 @@ const AuthContextProvider = ({ children }) => {
         company,
         companyLogo,
         handleEditCompany,
+        allCompaniesProfilesResponse,
+        setAllCompaniesProfilesResponse,
       }}
     >
       {children}

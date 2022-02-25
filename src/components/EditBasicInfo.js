@@ -34,7 +34,13 @@ const EditBasicInfo = () => {
       return;
     }
     formData.append('files', files[0]);
-    await handleEditProfile(formData, data.name, window.localStorage.getItem('profileId'));
+    await handleEditProfile(
+      formData,
+      data.name,
+      window.localStorage.getItem('currentProfileId')
+        ? window.localStorage.getItem('currentProfileId')
+        : window.localStorage.getItem('profileId')
+    );
     toast({
       title: 'Name and profile photo changed.',
 
@@ -76,7 +82,11 @@ const EditBasicInfo = () => {
                   bg="white"
                   borderColor="white"
                   type="text"
-                  placeholder={window.localStorage.getItem('userName')}
+                  placeholder={
+                    window.localStorage.getItem('currentUserName')
+                      ? window.localStorage.getItem('currentUserName')
+                      : window.localStorage.getItem('userName')
+                  }
                   {...register('name', { required: false })}
                 />
               </InputGroup>

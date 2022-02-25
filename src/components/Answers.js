@@ -92,8 +92,10 @@ const Answers = () => {
       finalAnswers[step] = watchFields[step];
     }
 
-    if (finalAnswers.filter((answer) => answer === undefined).length > 0) {
-      return;
+    for (let i = 0; i < finalAnswers.length; i++) {
+      if (finalAnswers[i] === undefined || !finalAnswers[i][0]) {
+        return;
+      }
     }
 
     for (let i = 0; i < questions.length; i++) {

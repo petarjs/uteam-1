@@ -3,10 +3,30 @@ export const QuestionContext = createContext();
 export const useQuestionContext = () => useContext(QuestionContext);
 
 import { getQuestions, getAllQuestions } from '../services/questions';
+import { getAnswers } from '../services/answer';
+import { getPhoto } from '../services/upload';
 
 const QuestionContextProvider = ({ children }) => {
   const [questions, setQuestions] = useState([]);
   const [maximumOrder, setMaximumOrder] = useState(0);
+  const [answers, setAnswers] = useState([]);
+
+  const answersMap = new Map();
+
+  const handleGetAnswers = async () => {
+    useEffect(async () => {
+      try {
+        const allAnswers = await getAnswers(
+          parseInt(window.localStorage.getItem('currentProfileId'))
+        );
+        window.localStorage.setItem('answers', JSON.stringify(allAnswers.data.data));
+        setAnswers(JSON.parse(window.localStorage.getItem('answers')));
+        return;
+      } catch (error) {
+        return;
+      }
+    }, []);
+  };
 
   const handleGetQuestions = async () => {
     useEffect(async () => {
@@ -44,6 +64,8 @@ const QuestionContextProvider = ({ children }) => {
         handleGetQuestions,
         maximumOrder,
         setMaximumOrder,
+        handleGetAnswers,
+        answers,
       }}
     >
       {children}
