@@ -9,6 +9,11 @@ const NavItem = ({ navSize, title, icon, description, link }) => {
   const { setActiveMainContent } = useAuthContext();
   const [active, setActive] = useState(false);
   const handleSetActiveChange = () => setActive(!active);
+  const handleIconButton = () => {
+    setActiveMainContent(title);
+    window.localStorage.removeItem('currentUserName');
+    window.localStorage.removeItem('currentProfileId');
+  };
   return (
     <Flex
       mt={30}
@@ -33,12 +38,7 @@ const NavItem = ({ navSize, title, icon, description, link }) => {
           w={navSize == NAV_SIZE.LARGE && '100%'}
         >
           <Link to={link}>
-            <MenuButton
-              w="100%"
-              onClick={() => {
-                setActiveMainContent(title);
-              }}
-            >
+            <MenuButton w="100%" onClick={handleIconButton}>
               <Flex>
                 <Icon color="white" as={icon} fontSize="xl" />
 

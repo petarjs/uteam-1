@@ -3,9 +3,14 @@ export const AuthContext = createContext();
 export const useAuthContext = () => useContext(AuthContext);
 import { login, passwordChange } from '../services/auth';
 import { userRegister } from '../services/register';
-import { registerCompany } from '../services/company';
+import { registerCompany, getCompnay, editCompany, getCompanyLogo } from '../services/company';
 import { uploadPhoto } from '../services/upload';
-import { createProfile, getProfile, editProfile } from '../services/profile';
+import {
+  createProfile,
+  getProfile,
+  editProfile,
+  getProfilesFromCompnay,
+} from '../services/profile';
 import { getUserInfo } from '../services/user';
 import { backendClient } from '../services/http';
 
@@ -14,10 +19,15 @@ const AuthContextProvider = ({ children }) => {
   const [jwt, setJwt] = useState(window.localStorage.getItem('jwt'));
   const [userName, setUserName] = useState(window.localStorage.getItem('userName'));
   const [profilePhoto, setProfilePhoto] = useState(window.localStorage.getItem('profilePhoto'));
+  const [company, setCompany] = useState(window.localStorage.getItem('company'));
+  const [companyLogo, setCompanyLogo] = useState(window.localStorage.getItem('companyLogo'));
   const [userData, setUserData] = useState();
   const [isLoggedIn, setIsLoggedIn] = useState(window.localStorage.getItem('jwt') ? true : false);
   const [activeOption, setActiveOption] = useState('login');
   const [activeMainContent, setActiveMainContent] = useState('Main content');
+  const [allCompaniesProfilesResponse, setAllCompaniesProfilesResponse] = useState(
+    JSON.parse(window.localStorage.getItem('allCompaniesProfiles'))
+  );
 
   window.localStorage.setItem('isAuthenticated', 'false');
 
@@ -38,6 +48,12 @@ const AuthContextProvider = ({ children }) => {
     window.localStorage.removeItem('userName');
     window.localStorage.removeItem('profilePhoto');
     window.localStorage.removeItem('profileId');
+    window.localStorage.removeItem('companyId');
+    window.localStorage.removeItem('company');
+    window.localStorage.removeItem('companyLogo');
+    window.localStorage.removeItem('allQuestions');
+    window.localStorage.removeItem('allCompaniesProfiles');
+    setCompanyLogo(false);
     setUserName('');
     setProfilePhoto('');
     setIsLoggedIn(false);
@@ -58,18 +74,46 @@ const AuthContextProvider = ({ children }) => {
 
       const userInfo = await getUserInfo();
       const userProfile = await getProfile(userInfo.data.id);
-
-      console.log(userProfile);
+      const userCompany = await getCompnay(userInfo.data.id);
 
       window.localStorage.setItem('profileId', userProfile.data.data[0].id);
+      const companyLogo = await getCompanyLogo(window.localStorage.getItem('profileId'));
+
+      if (companyLogo.data.data[0].attributes.logo.data) {
+        window.localStorage.setItem(
+          'companyLogo',
+          process.env.REACT_APP_ASSET_URL +
+            companyLogo.data.data[0].attributes.logo.data.attributes.url
+        );
+      } else {
+        window.localStorage.setItem('companyLogo', false);
+      }
+
+      setCompanyLogo(window.localStorage.getItem('companyLogo'));
       window.localStorage.setItem(
         'profilePhoto',
 
         process.env.REACT_APP_ASSET_URL +
           userProfile.data.data[0].attributes.profilePhoto.data.attributes.url
       );
-      console.log(window.localStorage.getItem('profilePhoto'));
+      window.localStorage.setItem(
+        'company',
+        userCompany.data.data[0].attributes.company.data.attributes.name
+      );
+      window.localStorage.setItem('companyId', userCompany.data.data[0].attributes.company.data.id);
+      const allCompaniesProfiles = await getProfilesFromCompnay(
+        window.localStorage.getItem('companyId')
+      );
+      window.localStorage.setItem(
+        'allCompaniesProfiles',
+        JSON.stringify(allCompaniesProfiles.data.data)
+      );
 
+      setAllCompaniesProfilesResponse(
+        JSON.parse(window.localStorage.getItem('allCompaniesProfiles'))
+      );
+
+      setCompany(window.localStorage.getItem('company'));
       setProfilePhoto(window.localStorage.getItem('profilePhoto'));
       window.localStorage.setItem('userName', userProfile.data.data[0].attributes.name);
       setUserName(window.localStorage.getItem('userName'));
@@ -86,10 +130,10 @@ const AuthContextProvider = ({ children }) => {
       let authenticatedUser = await login(window.localStorage.getItem('email'), currentPassword);
       if (authenticatedUser.status === 200) {
         const userId = authenticatedUser.data.user.id;
-        console.log(userId);
+
         await passwordChange(userId, newPassword);
         authenticatedUser = await login(window.localStorage.getItem('email'), newPassword);
-        console.log(authenticatedUser);
+
         window.localStorage.setItem('jwt', authenticatedUser.data.jwt);
         setJwt(window.localStorage.getItem('jwt'));
       }
@@ -117,39 +161,128 @@ const AuthContextProvider = ({ children }) => {
     }
   };
 
-  const handleUserRegister = async (formData, company, name, email, password) => {
+  const handleEditCompany = async (formData, companyId, companyName) => {
     try {
-      const [registerResponse, companyResponse, photoResponse] = await Promise.all([
-        userRegister(name, email, password),
-        registerCompany(company),
-        uploadPhoto(formData),
-      ]);
-      await createProfile(
-        registerResponse.data.user.id,
-        companyResponse.data.data.id,
-        photoResponse.data[0].id,
-        name
-      );
-      setUserData(registerResponse.user);
-      setIsLoggedIn(true);
-      setActiveOption(null);
-      window.localStorage.setItem('jwt', registerResponse.data.jwt);
-      const userInfo = await getUserInfo();
-      const userProfile = await getProfile(userInfo.data.id);
+      const photoResponse = await uploadPhoto(formData);
+
+      let editedCompany = await editCompany(companyId, companyName, photoResponse.data[0].id);
 
       window.localStorage.setItem(
-        'profilePhoto',
-        process.env.REACT_APP_ASSET_URL +
-          userProfile.data.data[0].attributes.profilePhoto.data.attributes.url
+        'companyLogo',
+        process.env.REACT_APP_ASSET_URL + photoResponse.data[0].url
       );
-      setProfilePhoto(window.localStorage.getItem('profilePhoto'));
-      window.localStorage.setItem('userName', userInfo.data.username);
-      setUserName(window.localStorage.getItem('userName'));
+      setCompanyLogo(window.localStorage.getItem('companyLogo'));
+      window.localStorage.setItem('company', editedCompany.data.data.attributes.name);
+      setCompany(window.localStorage.getItem('company'));
+    } catch (error) {
+      console.error(error);
+      setErrorVisible(true);
+    }
+  };
+
+  const handleUserRegister = async (formData, company, selectedCompany, name, email, password) => {
+    try {
+      if (company) {
+        const [registerResponse, companyResponse, photoResponse] = await Promise.all([
+          userRegister(name, email, password),
+          registerCompany(company),
+          uploadPhoto(formData),
+        ]);
+        const profileResponse = await createProfile(
+          registerResponse.data.user.id,
+          companyResponse.data.data.id,
+          photoResponse.data[0].id,
+          name
+        );
+
+        setUserData(registerResponse.user);
+        setIsLoggedIn(true);
+        setActiveOption(null);
+        window.localStorage.setItem('jwt', registerResponse.data.jwt);
+        const userInfo = await getUserInfo();
+        const userProfile = await getProfile(userInfo.data.id);
+
+        window.localStorage.setItem('company', company);
+        setCompany(window.localStorage.getItem('company'));
+        window.localStorage.setItem(
+          'profilePhoto',
+          process.env.REACT_APP_ASSET_URL +
+            userProfile.data.data[0].attributes.profilePhoto.data.attributes.url
+        );
+        const allCompaniesProfiles = await getProfilesFromCompnay(
+          window.localStorage.getItem('companyId')
+        );
+        window.localStorage.setItem(
+          'allCompaniesProfiles',
+          JSON.stringify(allCompaniesProfiles.data.data)
+        );
+
+        setAllCompaniesProfilesResponse(
+          JSON.parse(window.localStorage.getItem('allCompaniesProfiles'))
+        );
+        setProfilePhoto(window.localStorage.getItem('profilePhoto'));
+        window.localStorage.setItem('userName', userInfo.data.username);
+        setUserName(window.localStorage.getItem('userName'));
+      } else {
+        const [registerResponse, photoResponse] = await Promise.all([
+          userRegister(name, email, password),
+          uploadPhoto(formData),
+        ]);
+        const profileResponse = await createProfile(
+          registerResponse.data.user.id,
+          parseInt(selectedCompany),
+          photoResponse.data[0].id,
+          name
+        );
+
+        window.localStorage.setItem('profileId', profileResponse.data.data.id);
+        setUserData(registerResponse.user);
+        setIsLoggedIn(true);
+        setActiveOption(null);
+        window.localStorage.setItem('jwt', registerResponse.data.jwt);
+        const userInfo = await getUserInfo();
+        const userProfile = await getProfile(userInfo.data.id);
+        const registeredCompany = await getCompnay(parseInt(registerResponse.data.user.id));
+
+        window.localStorage.setItem(
+          'company',
+          registeredCompany.data.data[0].attributes.company.data.attributes.name
+        );
+        window.localStorage.setItem(
+          'companyId',
+          registeredCompany.data.data[0].attributes.company.data.id
+        );
+
+        setCompany(window.localStorage.getItem('company'));
+
+        const allCompaniesProfiles = await getProfilesFromCompnay(
+          window.localStorage.getItem('companyId')
+        );
+        window.localStorage.setItem(
+          'allCompaniesProfiles',
+          JSON.stringify(allCompaniesProfiles.data.data)
+        );
+
+        setAllCompaniesProfilesResponse(
+          JSON.parse(window.localStorage.getItem('allCompaniesProfiles'))
+        );
+
+        window.localStorage.setItem(
+          'profilePhoto',
+          process.env.REACT_APP_ASSET_URL +
+            userProfile.data.data[0].attributes.profilePhoto.data.attributes.url
+        );
+        setProfilePhoto(window.localStorage.getItem('profilePhoto'));
+        window.localStorage.setItem('userName', userInfo.data.username);
+        setUserName(window.localStorage.getItem('userName'));
+      }
+
       return true;
     } catch (error) {
       return false;
     }
   };
+
   return (
     <AuthContext.Provider
       value={{
@@ -168,6 +301,11 @@ const AuthContextProvider = ({ children }) => {
         setActiveMainContent,
         handleEditProfile,
         handlePasswordChange,
+        company,
+        companyLogo,
+        handleEditCompany,
+        allCompaniesProfilesResponse,
+        setAllCompaniesProfilesResponse,
       }}
     >
       {children}

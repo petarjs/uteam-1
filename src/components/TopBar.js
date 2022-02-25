@@ -1,25 +1,33 @@
-import { HStack, Text, Button, Spacer, Icon } from '@chakra-ui/react';
+import { HStack, Text, Button, Spacer, Icon, Avatar } from '@chakra-ui/react';
 import { WiStars } from 'react-icons/wi';
 import { useAuthContext } from './AuthContextProvider';
 import { Link } from 'react-router-dom';
 
 const TopBar = () => {
-  const { isLoggedIn, handleLogout } = useAuthContext();
+  const { isLoggedIn, handleLogout, company, companyLogo } = useAuthContext();
   return (
     <HStack
       pos="fixed"
+      zIndex="2"
       w="100vw"
       alignItems="stretch"
       bgGradient="linear(to-r, #38C6BD, #38C6BD, #97FFCF)"
       h="10vh"
       borderBottom="3px solid"
       borderColor="white"
+      top="0"
+      left="0"
     >
       <HStack color="White" fontWeight={'extrabold'} pl={10}>
-        <Icon color="white" as={WiStars} fontSize="xxx-large" />
+        {companyLogo && companyLogo != 'false' ? (
+          <Avatar width="60px" height="60px" src={companyLogo} />
+        ) : (
+          <Icon color="white" as={WiStars} fontSize="xxx-large" />
+        )}
+
         <Link to="/">
           <Text pl={1} _hover={{ cursor: 'pointer' }}>
-            uTeam
+            {isLoggedIn ? company : 'uTeam'}
           </Text>
         </Link>
       </HStack>

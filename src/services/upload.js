@@ -8,3 +8,12 @@ export const uploadPhoto = async (formData) => {
     throw `Photo upload failed - ${error}`;
   }
 };
+
+export const getPhoto = async (photoId) => {
+  try {
+    const response = await backendClient.get(`/upload/files/${photoId}`);
+    return response;
+  } catch (error) {
+    throw `Get photo failed - ${error}`;
+  }
+};

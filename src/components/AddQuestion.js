@@ -4,11 +4,7 @@ import { useForm } from 'react-hook-form';
 import { useQuestionContext } from './QuestionContextProvider';
 
 const AddQuestion = ({ addQuestion }) => {
-  const { questions, setQuestions } = useQuestionContext();
-
-  const getUniqueOrder = () => {
-    return Date.now() + (Math.random() * 100000).toFixed();
-  };
+  const { questions, setQuestions, maximumOrder, setMaximumOrder } = useQuestionContext();
 
   const {
     register,
@@ -21,16 +17,21 @@ const AddQuestion = ({ addQuestion }) => {
   const onSubmit = async (data) => {
     const formData = new FormData();
 
-    let newOrder = getUniqueOrder();
     const question = {
       formData,
       text: data.text,
       option: data.option,
-      order: newOrder,
+      order: maximumOrder + 1,
+      company: window.localStorage.getItem('companyId'),
     };
+
+    setMaximumOrder(maximumOrder + 1);
+
     try {
       const createdQuestion = await addQuestion(question);
+
       setQuestions([...questions, createdQuestion.data]);
+
       reset();
     } catch (error) {
       console.log(error);
@@ -46,7 +47,7 @@ const AddQuestion = ({ addQuestion }) => {
           type="text"
           {...register('text', { required: true })}
         />
-        <Button colorScheme="pink" px="8" type="submit">
+        <Button bg="#87d4cd" px="8" type="submit" color="white" cursor="pointer">
           Add Question
         </Button>
       </HStack>
